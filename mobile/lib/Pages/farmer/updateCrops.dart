@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
 
-class PublishCrops extends StatefulWidget {
-  const PublishCrops({Key? key}) : super(key: key);
+class UpdateCrops extends StatefulWidget {
+  final String cropType;
+  final String agriculturalProperty;
+  final String waterSource;
+  final String area;
+  final String expectedHarvest;
+
+  UpdateCrops({
+    required this.cropType,
+    required this.agriculturalProperty,
+    required this.waterSource,
+    required this.area,
+    required this.expectedHarvest,
+  });
 
   @override
-  _PublishCropsState createState() => _PublishCropsState();
+  _UpdateCropsState createState() => _UpdateCropsState();
 }
 
-class _PublishCropsState extends State<PublishCrops> {
+class _UpdateCropsState extends State<UpdateCrops> {
   TextEditingController areaController = TextEditingController();
   TextEditingController expectedHarvestController = TextEditingController();
 
@@ -15,15 +27,26 @@ class _PublishCropsState extends State<PublishCrops> {
   String? selectedAgriculturalProperty;
   String? selectedWaterSource;
 
-  List<String> cropTypes = ["Pumking", "Carrot", "Kaju" ,"Thakkali","Miris"];
-  List<String> agriculturalProperties = ["Property 1", "Property 2", "Property 3"];
-  List<String> waterSources = ["Source 1", "Source 2", "Source 3"];
+  List<String> cropTypes = ["Crop A", "Crop B", "Crop C"];
+  List<String> agriculturalProperties = ["Property A", "Property B", "Property C"];
+  List<String> waterSources = ["Water A", "Water B", "Water C"];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize dropdown values with the values from the card
+    selectedCropType = widget.cropType;
+    selectedAgriculturalProperty = widget.agriculturalProperty;
+    selectedWaterSource = widget.waterSource;
+    areaController.text = widget.area;
+    expectedHarvestController.text = widget.expectedHarvest;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Publish Crops"),
+        title: Text("Update Crops"),
         backgroundColor: const Color.fromARGB(255, 42, 175, 46),
       ),
       body: SingleChildScrollView(
@@ -37,30 +60,15 @@ class _PublishCropsState extends State<PublishCrops> {
             buildDropdownField(selectedAgriculturalProperty, agriculturalProperties, 'Agriculture Property'),
             SizedBox(height: 16),
             buildDropdownField(selectedWaterSource, waterSources, 'Water Source'),
-            SizedBox (height: 16),
+            SizedBox(height: 16),
             buildInputField(areaController, 'Area'),
             SizedBox(height: 16),
             buildInputField(expectedHarvestController, 'Expected Harvest'),
-
             SizedBox(height: 16),
-
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                
-                  // Handle form submission
-                  String cropType = selectedCropType ?? '';
-                  String agriculturalProperty = selectedAgriculturalProperty ?? '';
-                  String waterSource = selectedWaterSource ?? '';
-                  String area = areaController.text;
-                  String expectedHarvest = expectedHarvestController.text;
-                  
-                  // Process the data or make API calls as needed
-                  print('Crop Type: $cropType');
-                  print('Agriculture Property: $agriculturalProperty');
-                  print('Water Source: $waterSource');
-                  print('Area: $area');
-                  print('Expected Harvest: $expectedHarvest');
+                  // Handle the update logic here, you can use the values from the controllers
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
@@ -68,14 +76,12 @@ class _PublishCropsState extends State<PublishCrops> {
                   ),
                   minimumSize: MaterialStateProperty.all<Size>(Size(170, 50)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0), // Set the border radius
-        ),
-      ),
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
                 ),
-                
-                child: Text('Publish',style: TextStyle(fontSize: 15),),
-                
+                child: Text('Update', style: TextStyle(fontSize: 15)),
               ),
             ),
           ],
@@ -84,11 +90,7 @@ class _PublishCropsState extends State<PublishCrops> {
     );
   }
 
-  Widget buildDropdownField(
-    String? selectedValue,
-    List<String> items,
-    String labelText,
-  ) {
+  Widget buildDropdownField(String? selectedValue, List<String> items, String labelText) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
@@ -141,10 +143,7 @@ class _PublishCropsState extends State<PublishCrops> {
     );
   }
 
-  Widget buildInputField(
-    TextEditingController controller,
-    String labelText,
-  ) {
+  Widget buildInputField(TextEditingController controller, String labelText) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
@@ -188,11 +187,3 @@ class _PublishCropsState extends State<PublishCrops> {
     );
   }
 }
-
-void main() {
-  runApp(MaterialApp(
-    home: PublishCrops(),
-  ));
-}
-
-
