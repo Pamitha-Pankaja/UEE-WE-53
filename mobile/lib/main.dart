@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:mobile/Pages/Buyer/buyer_home.dart';
+import 'package:mobile/Pages/Common/first_page.dart';
+import 'package:mobile/Pages/Common/login_page.dart';
+import 'package:mobile/Pages/Common/signup_page.dart';
+import 'package:mobile/Pages/Farmer/publish_harvest.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +24,7 @@ void main() async {
       builder: (context) => MyApp(),
     ),
   );
+  //runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,14 +34,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
+      home: FirstPage(),
       routes: <String, WidgetBuilder>{
-         '/buyer_home': (context) => BuyerHome(),
-      }
-    );
-  }
+         '/buyer_home': (context) {
+          // Retrieve the user data from arguments
+          final Map<String, dynamic> userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return BuyerHome(userData: userData);
+        },
+        '/publish_harvest': (context) {
+          // Retrieve the user data from arguments
+          final Map<String, dynamic> userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return PublishHarvest(userData: userData);
+        },
+         '/signup': (context) => SignupPage(),
+         '/login': (context) => LoginPage(),
+      }
+    );
+  }
 }
-
-
