@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:mobile/Pages/Buyer/buyer_home.dart';
+import 'package:mobile/Pages/Admin/ShowMyproperty.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,14 +30,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
-      routes: <String, WidgetBuilder>{
-         '/buyer_home': (context) => BuyerHome(),
-      }
-    );
+        title: 'Flutter Demo',
+        locale: DevicePreview.locale(context),
+        builder: DevicePreview.appBuilder,
+        home: MyProperty(),
+        routes: <String, WidgetBuilder>{
+          '/buyer_home': (context) => BuyerHome(),
+        });
   }
 }
-
-
+ 
