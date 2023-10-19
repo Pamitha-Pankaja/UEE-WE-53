@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/Components/Buyer/itemCard.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 //import '../Components/BuyersComponents/itemsCard.dart';
 class BuyerHome extends StatefulWidget {
-  const BuyerHome({super.key});
+  final Map<String, dynamic> userData;
+  const BuyerHome({required this.userData});
 
   @override
   State<BuyerHome> createState() => _BuyerHomeState();
@@ -128,37 +130,9 @@ class _BuyerHomeState extends State<BuyerHome> {
               ),
             ),
           Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: filteredItems.length, // Use the filtered items
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 12.0),
-                    padding: const EdgeInsets.all(16.0),
-                    height: 50.0,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x5f000000),
-                          offset: Offset(0.0, 4.0),
-                          blurRadius: 12.0,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(filteredItems[index],
-                            style: const TextStyle(fontSize: 16.0)),
-                      ],
-                    ),
-                  );
-                },
-              ),
+              child: ItemCard(),
             ),
+           
         ],
       ),
     );
