@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PublishCrops extends StatefulWidget {
-  const PublishCrops({Key? key}) : super(key: key);
+  final Map<String, dynamic> userData;
+  const PublishCrops({required this.userData});
 
   @override
   _PublishCropsState createState() => _PublishCropsState();
@@ -15,15 +17,100 @@ class _PublishCropsState extends State<PublishCrops> {
   String? selectedAgriculturalProperty;
   String? selectedWaterSource;
 
-  List<String> cropTypes = ["Pumking", "Carrot", "Kaju" ,"Thakkali","Miris"];
-  List<String> agriculturalProperties = ["Property 1", "Property 2", "Property 3"];
-  List<String> waterSources = ["Source 1", "Source 2", "Source 3"];
+  List<String> cropTypes = ["වට්ටක්කා", "කැරට්", "කජු", "තක්කාලි", "මිරිස්"];
+  List<String> agriculturalProperties = [];
+  List<String> waterSources = [];
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDropdownData();
+  }
+
+  Future<void> fetchDropdownData() async {
+    String email = widget.userData['email'];
+    QuerySnapshot propertiesQuery = await firestore
+        .collection('properties')
+        .where('email', isEqualTo: email)
+        .get();
+
+    if (propertiesQuery.docs.isNotEmpty) {
+      setState(() {
+        agriculturalProperties = propertiesQuery.docs
+            .map((doc) => doc['propertyname'] as String)
+            .toList();
+        waterSources = propertiesQuery.docs
+            .map((doc) => doc['watercomingmethod'] as String)
+            .toList();
+      });
+    }
+  }
+
+ Future<void> publishCropsData() async {
+  String cropType = selectedCropType ?? '';
+  String area = areaController.text;
+  String expectedHarvest = expectedHarvestController.text;
+  
+  // Retrieve additional fields from the selected property
+  String agricultureDivision = '';
+  String district = '';
+  String mainIrrigationArea = '';
+  String province = '';
+  String secretaryDivision = '';
+  String subIrrigationArea = '';
+
+  String email = widget.userData['email'];
+
+  QuerySnapshot propertiesQuery = await firestore
+      .collection('properties')
+      .where('email', isEqualTo: email)
+      .where('propertyname', isEqualTo: selectedAgriculturalProperty)
+      .where('watercomingmethod', isEqualTo: selectedWaterSource)
+      .get();
+
+  if (propertiesQuery.docs.isNotEmpty) {
+    // Get the first document in the result (there should be only one)
+    DocumentSnapshot propertyDocument = propertiesQuery.docs.first;
+    agricultureDivision = propertyDocument['agriculturedivision'] ?? '';
+    district = propertyDocument['district'] ?? '';
+    mainIrrigationArea = propertyDocument['mainirrigationarea'] ?? '';
+    province = propertyDocument['province'] ?? '';
+    secretaryDivision = propertyDocument['secreterydivision'] ?? '';
+    subIrrigationArea = propertyDocument['subirrigationarea'] ?? '';
+
+    // Create a new document in the "crops" collection
+    await firestore.collection('crops').add({
+      'cropType': cropType,
+      'agriculturalProperty': selectedAgriculturalProperty,
+      'waterSource': selectedWaterSource,
+      'area': area,
+      'expectedHarvest': expectedHarvest,
+      'email': email,
+      'agricultureDivision': agricultureDivision,
+      'district': district,
+      'mainIrrigationArea': mainIrrigationArea,
+      'province': province,
+      'secretaryDivision': secretaryDivision,
+      'subIrrigationArea': subIrrigationArea,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    // Reset form fields or show a success message as needed
+    print('Crops data published successfully');
+  } else {
+    // Handle the case where the properties document was not found
+    print('Selected properties not found for email: $email');
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Publish Crops"),
+        title: Text("බෝග ඇතුලත් කිරීම"),
         backgroundColor: const Color.fromARGB(255, 42, 175, 46),
       ),
       body: SingleChildScrollView(
@@ -32,35 +119,36 @@ class _PublishCropsState extends State<PublishCrops> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 50),
-            buildDropdownField(selectedCropType, cropTypes, 'Crop Type'),
+            buildDropdownField(selectedCropType, cropTypes, 'බෝග වර්ගය', (String? value) {
+              setState(() {
+                selectedCropType = value;
+              });
+            }),
             SizedBox(height: 16),
-            buildDropdownField(selectedAgriculturalProperty, agriculturalProperties, 'Agriculture Property'),
+            buildDropdownField(selectedAgriculturalProperty, agriculturalProperties, 'කෘෂිකාර්මික දේපල තෝරන්න', (String? value) {
+              setState(() {
+                selectedAgriculturalProperty = value;
+              });
+            }),
             SizedBox(height: 16),
-            buildDropdownField(selectedWaterSource, waterSources, 'Water Source'),
-            SizedBox (height: 16),
-            buildInputField(areaController, 'Area'),
+            buildDropdownField(selectedWaterSource, waterSources, 'ජල මූලාශ්‍රය', (String? value) {
+              setState(() {
+                selectedWaterSource = value;
+              });
+            }),
             SizedBox(height: 16),
-            buildInputField(expectedHarvestController, 'Expected Harvest'),
+            buildInputField(areaController, 'භූමි ප්‍රමාණය'),
+            SizedBox(height: 16),
+            buildInputField(expectedHarvestController, 'අපේක්ෂිත අස්වැන්න'),
 
             SizedBox(height: 16),
 
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                
-                  // Handle form submission
-                  String cropType = selectedCropType ?? '';
-                  String agriculturalProperty = selectedAgriculturalProperty ?? '';
-                  String waterSource = selectedWaterSource ?? '';
-                  String area = areaController.text;
-                  String expectedHarvest = expectedHarvestController.text;
-                  
-                  // Process the data or make API calls as needed
-                  print('Crop Type: $cropType');
-                  print('Agriculture Property: $agriculturalProperty');
-                  print('Water Source: $waterSource');
-                  print('Area: $area');
-                  print('Expected Harvest: $expectedHarvest');
+                  checkAndCreateCropsCollection().then((_) {
+                    publishCropsData();
+                  });
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
@@ -68,14 +156,12 @@ class _PublishCropsState extends State<PublishCrops> {
                   ),
                   minimumSize: MaterialStateProperty.all<Size>(Size(170, 50)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0), // Set the border radius
-        ),
-      ),
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
                 ),
-                
-                child: Text('Publish',style: TextStyle(fontSize: 15),),
-                
+                child: Text('Publish', style: TextStyle(fontSize: 15)),
               ),
             ),
           ],
@@ -84,10 +170,19 @@ class _PublishCropsState extends State<PublishCrops> {
     );
   }
 
+  Future<void> checkAndCreateCropsCollection() async {
+    final DocumentReference collectionRef = firestore.collection('crops').doc('testDoc');
+    final DocumentSnapshot collectionSnapshot = await collectionRef.get();
+    if (!collectionSnapshot.exists) {
+      await collectionRef.set({'dummyField': 'dummyValue'});
+    }
+  }
+
   Widget buildDropdownField(
     String? selectedValue,
     List<String> items,
     String labelText,
+    void Function(String?) onChanged,
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -118,11 +213,7 @@ class _PublishCropsState extends State<PublishCrops> {
               ),
               child: DropdownButtonFormField<String>(
                 value: selectedValue,
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedValue = newValue;
-                  });
-                },
+                onChanged: onChanged,
                 items: items.map((item) {
                   return DropdownMenuItem(
                     value: item,
@@ -136,7 +227,7 @@ class _PublishCropsState extends State<PublishCrops> {
               ),
             ),
           ),
-        ],
+          ],
       ),
     );
   }
@@ -182,17 +273,11 @@ class _PublishCropsState extends State<PublishCrops> {
                 ),
               ),
             ),
-          ),
-        ],
+          )
+          ],
+
       ),
     );
   }
 }
-
-void main() {
-  runApp(MaterialApp(
-    home: PublishCrops(),
-  ));
-}
-
 
