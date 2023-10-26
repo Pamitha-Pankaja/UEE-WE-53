@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // Navigate based on the user's role and pass the email
     if (userRole == "farmer") {
-      Navigator.pushNamed(context, '/publish_harvest', arguments: {'email': email, 'password': password, 'role': userRole, 'uid': uid});
+      Navigator.pushNamed(context, '/publishCrops', arguments: {'email': email, 'password': password, 'role': userRole, 'uid': uid});
 
     } else if (userRole == "buyer") {
      Navigator.pushNamed(context, '/buyer_home', arguments: {'email': email, 'password': password, 'role': userRole, 'uid': uid});

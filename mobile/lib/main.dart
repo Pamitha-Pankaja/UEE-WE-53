@@ -5,7 +5,10 @@ import 'package:mobile/Pages/Buyer/buyer_home.dart';
 import 'package:mobile/Pages/Common/first_page.dart';
 import 'package:mobile/Pages/Common/login_page.dart';
 import 'package:mobile/Pages/Common/signup_page.dart';
+import 'package:mobile/Pages/Farmer/myCrops.dart';
+import 'package:mobile/Pages/Farmer/publishCrops.dart';
 import 'package:mobile/Pages/Farmer/publish_harvest.dart';
+import 'package:mobile/Pages/Farmer/updateCrops.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,10 +48,24 @@ class MyApp extends StatelessWidget {
           final Map<String, dynamic> userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return BuyerHome(userData: userData);
         },
-        '/publish_harvest': (context) {
+        // '/publish_harvest': (context) {
+        //   // Retrieve the user data from arguments
+        //   final Map<String, dynamic> userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        //   return PublishHarvest(userData: userData);
+        // },
+         '/signup': (context) => SignupPage(),
+         '/login': (context) => LoginPage(),
+
+          '/publishCrops': (context) {
           // Retrieve the user data from arguments
           final Map<String, dynamic> userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return PublishHarvest(userData: userData);
+          return PublishCrops(userData: userData);
+        },
+        
+        '/myCrops': (context) {
+          // Retrieve the user data from arguments
+          final Map<String, dynamic> userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return MyCrops(userData: userData);
         },
          '/signup': (context) => SignupPage(),
          '/login': (context) => LoginPage(),
