@@ -219,17 +219,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                   String subirrigationarea = selectedsubirrigationarea ?? '';
 
                   // Process the data or make API calls as needed
-                  print('Crop Type: $province');
-                  print('Agriculture Property: $district');
-                  print('Water Source: $secreterydivision');
-                  print('Area: $area');
-                  print('Expected Harvest: $comment');
-                  print('Agriculture Division: $agriculturedivision');
-                  print('Property Name: $propertyname');
-                  print('Owner Name: $ownername');
-                  print('Water Coming Method: $watercomingmethod');
-                  print('Main Irrigation Area: $mainirrigationarea');
-                  print('Sub Irrigation Area: $subirrigationarea');
+
                   updateFirestoreDocument();
                 },
                 style: ButtonStyle(
