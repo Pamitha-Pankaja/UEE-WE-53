@@ -5,7 +5,8 @@ import 'package:mobile/Pages/Buyer/buyer_home.dart';
 import 'package:mobile/Pages/Common/first_page.dart';
 import 'package:mobile/Pages/Common/login_page.dart';
 import 'package:mobile/Pages/Common/signup_page.dart';
-import 'package:mobile/Pages/Farmer/publish_harvest.dart';
+import 'package:mobile/Pages/Admin/ShowMyproperty.dart';
+import 'package:mobile/Pages/Admin/AdminCropStaristic.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,13 +25,11 @@ void main() async {
       builder: (context) => MyApp(),
     ),
   );
-  //runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,19 +39,30 @@ class MyApp extends StatelessWidget {
       builder: DevicePreview.appBuilder,
       home: FirstPage(),
       routes: <String, WidgetBuilder>{
-         '/buyer_home': (context) {
+        '/buyer_home': (context) {
           // Retrieve the user data from arguments
-          final Map<String, dynamic> userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          final Map<String, dynamic> userData = ModalRoute.of(context)!
+              .settings
+              .arguments as Map<String, dynamic>;
           return BuyerHome(userData: userData);
         },
-        '/publish_harvest': (context) {
+        '/show-property': (context) {
           // Retrieve the user data from arguments
-          final Map<String, dynamic> userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return PublishHarvest(userData: userData);
+          final Map<String, dynamic> userData = ModalRoute.of(context)!
+              .settings
+              .arguments as Map<String, dynamic>;
+          return AdminCropStaristic();
         },
-         '/signup': (context) => SignupPage(),
-         '/login': (context) => LoginPage(),
-      }
-    );
-  }
+        '/signup': (context) => SignupPage(),
+        '/login': (context) => LoginPage(),
+        '/add-property': (context) {
+          // Retrieve the user data from arguments
+          final Map<String, dynamic> userData = ModalRoute.of(context)!
+              .settings
+              .arguments as Map<String, dynamic>;
+          return MyProperty(userData: userData);
+        },
+      },
+    );
+  }
 }
