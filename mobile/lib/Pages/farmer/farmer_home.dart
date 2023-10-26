@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/Pages/Farmer/cropStatistcs.dart';
+import 'package:mobile/Pages/Farmer/myCrops.dart';
+import 'package:mobile/Pages/Farmer/publishCrops.dart';
 import 'package:mobile/Pages/farmer/my_harvest.dart';
 import 'package:mobile/Pages/farmer/publish_harvest.dart';
 import 'package:mobile/Services/FarmerServices/farmer_profile_services.dart';
@@ -62,13 +65,13 @@ class _FarmerHomeState extends State<FarmerHome> {
                       child: ListView(
                         children: <Widget>[
                           TextWithDivider('බෝග සංඛ්‍යාලේකන', () {
-                            // Handle click on Text 1
+                            Navigator.push(context,MaterialPageRoute(builder: (context) => CropStats(),),);
                           }),
                           TextWithDivider('බෝග පළ කරන්න', () {
-                            // Handle click on Text 2
+                            Navigator.push(context,MaterialPageRoute(builder: (context) => PublishCrops(userData: widget.userData,),),);
                           }),
                           TextWithDivider('මගේ බෝග', () {
-                            // Handle click on Text 3
+                            Navigator.push(context,MaterialPageRoute(builder: (context) => MyCrops(userData: widget.userData,),),);
                           }),
                           TextWithDivider('අස්වැන්න පළ කරන්න', () {
                             Navigator.push(context,MaterialPageRoute(builder: (context) => PublishHarvest(userData: widget.userData,),),);
