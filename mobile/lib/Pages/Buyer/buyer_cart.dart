@@ -1,52 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/Components/Buyer/itemCard.dart';
+import 'package:mobile/Components/Buyer/favouriteCard.dart';
 
 class BuyerCart extends StatefulWidget {
-  final  item;
-  BuyerCart({super.key, required this.item});
+  final Map<String, dynamic> userData;
+  const BuyerCart({Key? key, required this.userData}) : super(key: key);
   @override
   State<BuyerCart> createState() => _BuyerCartState();
 }
 
 class _BuyerCartState extends State<BuyerCart> {
-  List<Item> itemsInCart = [];
-
-  @override
-  void initState() {
-    super.initState();
-    itemsInCart = List.from(widget.item); // Initialize the cart items list
-  }
-
-  // Method to add items to the cart
-  void addItemToCart(Item item) {
-    setState(() {
-      itemsInCart.add(item);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Cart'),
+        title: Text("මගේ කරත්තය"),
+        backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
-      body: ListView(
-        children: itemsInCart.map((item) {
-          return Card(
-            child: ListTile(
-              leading: Image.asset(
-                item.imageUrl,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),
-              title: Text('Item: ${item.name}'), // Display the item name
-              subtitle: Text('Quantity: ${item.quantity}'), // Display the item quantity
-              trailing: Text('Price: Rs.${item.price.toStringAsFixed(2)}'),
-            ),
-          );
-        }).toList(),
-      ),
+      body: FavouriteCard(userData: widget.userData),
     );
   }
 }
