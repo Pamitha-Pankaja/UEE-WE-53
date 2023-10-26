@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         },
          '/signup': (context) => SignupPage(),
          '/login': (context) => LoginPage(),
-      }
-    );
-  }
+    }
+);
+}
 }
