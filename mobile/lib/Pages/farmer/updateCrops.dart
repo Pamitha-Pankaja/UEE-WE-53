@@ -461,7 +461,7 @@ class _UpdateCropsState extends State<UpdateCrops> {
   String? selectedAgriculturalProperty;
   String? selectedWaterSource;
 
-  List<String> cropTypes = ["Miris", "Carrot", "Crop C"];
+  List<String> cropTypes = ["වට්ටක්කා", "කැරට්", "කජු", "තක්කාලි", "මිරිස්"];
   List<String> agriculturalProperties = []; // Populate this with data from properties collection
   List<String> waterSources = []; // Populate this with data from properties collection
 
