@@ -1,38 +1,128 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/Pages/Buyer/item_details.dart';
-//import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Authentication
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ItemCard extends StatefulWidget {
+  final Map<String, dynamic> userData;
+  final String selectedTypeName;
+  final String searchTypeName;
+  const ItemCard({required this.userData, required this.selectedTypeName,required this.searchTypeName,});
   @override
   _ItemCardState createState() => _ItemCardState();
 }
 
 class _ItemCardState extends State<ItemCard> {
-  final List<Item> items = [
-    Item('තක්කාලි', 'assets/item1.png', '2500kg', 500.0),
-    Item('කැරට්', 'assets/item2.png', '2000kg', 750.0),
-    Item('බඩ ඉරිඟු', 'assets/item3.png', '1500kg', 650.0),
-    Item('තක්කාලි', 'assets/item4.png', '6000kg', 500.0),
-    Item('වට්ටක්කා', 'assets/item5.png', '1800kg', 450.0),
-    Item('අල', 'assets/item6.png', '4000kg', 350.0),
-    Item('අමුමිරිස්', 'assets/item7.png', '2300kg', 250.0),
-    Item('රාබු', 'assets/item8.png', '1000kg', 500.0),
-    // Add more items here
-  ];
+  // Initialize an empty list to store items from Firestore
+  List<Item> items = [];
+
+  // Function to fetch items from Firestore
+  Future<void> fetchItemsFromFirestore() async {
+    try {
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('published_harvest')
+          .get();
+
+      final List<Item> fetchedItems = [];
+
+      querySnapshot.docs.forEach((doc) {
+        final userId = doc['userid'] as String;
+        final itemsList = doc['items'] as List<dynamic>;
+
+        // Extract items from the itemsList and add them to the fetchedItems list
+        itemsList.forEach((itemData) {
+          final type = itemData['type'] ?? "Unknown";
+          final amount = (itemData['amount'] as num?)?.toDouble() ?? 0.0;
+          final price = (itemData['price'] as num?)?.toDouble() ?? 0.0;
+          final description = itemData['description'] ?? "Unknown";
+          final imageUrl = itemData['imageURL'] ?? "DefaultImageUrl";
+
+          print('type:${widget.selectedTypeName}');
+          print('type:${widget.searchTypeName}');
+          if (widget.selectedTypeName == type) {
+            fetchedItems
+                .add(Item(type, imageUrl, amount, price, description, userId));
+          }
+          else if (widget.searchTypeName == type){
+          fetchedItems
+              .add(Item(type, imageUrl, amount, price, description, userId));
+          }
+          else if (widget.selectedTypeName == '' && widget.searchTypeName == ''){
+          fetchedItems
+              .add(Item(type, imageUrl, amount, price, description, userId));
+          }
+        });
+      });
+
+      // Update the state to populate the items list
+      setState(() {
+        items = fetchedItems;
+        print('fetched:$fetchedItems');
+      });
+    } catch (e) {
+      print("Error fetching items from Firestore: $e");
+    }
+  }
+
+  Future<void> addToFavorites(Item item) async {
+    try {
+      final CollectionReference favoritesCollection =
+          FirebaseFirestore.instance.collection('favorites');
+
+      // Define the data you want to add to the favorites collection
+      final Map<String, dynamic> favoriteData = {
+        'type': item.type,
+        'amount': item.amount,
+        'price': item.price,
+        'description': item.description,
+        'imageURL': item.imageUrl,
+        'userId': item.userId,
+      };
+
+      // Create a reference to the user's document in the 'favorites' collection
+      final DocumentSnapshot userDoc =
+          await favoritesCollection.doc(widget.userData['uid']).get();
+
+      // Check if the user document already exists
+      //final DocumentSnapshot userDocSnapshot = await userDoc.get();
+
+      if (userDoc.exists) {
+        // User document exists, update the 'favorite_items' array
+        await favoritesCollection.doc(widget.userData['uid']).update({
+          'favorite_items': FieldValue.arrayUnion([favoriteData]),
+        });
+      } else {
+        // User document doesn't exist, create a new one
+        await favoritesCollection.doc(widget.userData['uid']).set({
+          'userId': widget.userData['uid'],
+          'favorite_items': [favoriteData],
+        });
+      }
+
+      // You can also show a confirmation message to the user.
+    } catch (e) {
+      print("Error adding item to favorites: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch items from Firestore when the widget initializes
+    fetchItemsFromFirestore();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Number of items in each row
-        childAspectRatio: 0.8, // Adjust this value to control card width
+        crossAxisCount: 2,
+        childAspectRatio: 0.78,
+        mainAxisSpacing: 10,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) {
-        final item = items[index]; // Get the current item
+        final item = items[index];
         return Container(
-         // width: 200, // Set the desired width
-         // height: 500, // Set the desired height
           padding: EdgeInsets.all(12.0),
           child: Card(
             child: Column(
@@ -41,11 +131,8 @@ class _ItemCardState extends State<ItemCard> {
                 Container(
                   width: double.infinity,
                   height: 136,
-                  child: Image.asset(
-                    item.imageUrl, // Use the imageUrl from the item
-                    width: 50,
-                    height: 50,
-                    scale: 0.1,
+                  child: Image.network(
+                    item.imageUrl,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -60,7 +147,7 @@ class _ItemCardState extends State<ItemCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        item.quantity, // Use the quantity from the item
+                        '${item.amount.toStringAsFixed(2)} Kg',
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 15,
@@ -70,20 +157,8 @@ class _ItemCardState extends State<ItemCard> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          // Add the selected item to the user's cart in Firestore
-                          // User? user =_auth.currentUser; // Get the current user
-                          // if (user != null) {
-                          //   await _cartCollection
-                          //       .doc(user
-                          //           .uid) // Use the user's UID as the document ID
-                          //       .collection('items')
-                          //       .add({
-                          //     'name': item.name,
-                          //     'imageUrl': item.imageUrl,
-                          //     'quantity': item.quantity,
-                          //     'price': item.price,
-                          //   });
-                          // }
+                          // When the cart icon is clicked, add the item to favorites
+                          await addToFavorites(item);
                         },
                         child: Icon(Icons.shopping_cart),
                       ),
@@ -121,13 +196,13 @@ class _ItemCardState extends State<ItemCard> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          minimumSize: Size(0, 20),
+                          minimumSize: Size(0, 28),
                         ),
                         child: Text(
                           'බලන්න',
                           style: TextStyle(
                             fontFamily: 'Iskoola Pota',
-                            fontSize: 10,
+                            fontSize: 12,
                             fontWeight: FontWeight.w400,
                             color: Color(0xffffffff),
                           ),
@@ -146,10 +221,13 @@ class _ItemCardState extends State<ItemCard> {
 }
 
 class Item {
-  final String name;
+  final String type;
   final String imageUrl;
-  final String quantity;
+  final double amount;
   final double price;
+  final String description;
+  final String userId;
 
-  Item(this.name, this.imageUrl, this.quantity, this.price);
+  Item(this.type, this.imageUrl, this.amount, this.price, this.description,
+      this.userId);
 }

@@ -1,152 +1,196 @@
-
 import 'package:flutter/material.dart';
-import 'package:mobile/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FavouriteCard extends StatefulWidget {
-  final String imageUrl;
-  final String itemName;
-  final String totalHarvest;
-  final String pricePerKg;
-
-  FavouriteCard({
-    required this.imageUrl,
-    required this.itemName,
-    required this.totalHarvest,
-    required this.pricePerKg,
-  });
+  final Map<String, dynamic> userData;
+  const FavouriteCard({required this.userData});
 
   @override
   State<FavouriteCard> createState() => _FavouriteCardState();
 }
 
 class _FavouriteCardState extends State<FavouriteCard> {
+  List<Map<String, dynamic>> favoriteItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch favorite items when the widget initializes
+    _fetchFavoriteItems();
+  }
+
+  Future<void> _fetchFavoriteItems() async {
+    try {
+      final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(widget.userData['uid'])
+          .get();
+
+      if (snapshot.exists) {
+        final documentData = snapshot.data() as Map<String, dynamic>;
+        final favoriteItemsData =
+            documentData['favorite_items'] as List<dynamic>;
+
+        favoriteItems = List<Map<String, dynamic>>.from(favoriteItemsData);
+      }
+    } catch (e) {
+      print("Error fetching favorite items: $e");
+    }
+
+    // Refresh the UI after fetching the favorite items
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> favoriteItems = [
-      {
-        'imageUrl': '[Image url]',
-        'itemName': 'Carrot',
-        'totalHarvest': 'Total Harvest: 200Kg',
-        'pricePerKg': 'Price (1Kg): Rs.350/=',
-      },
-      // Add more favorite items here
-    ];
+    if (favoriteItems.isEmpty) {
+       return Center(
+         child: CircularProgressIndicator(
+          strokeAlign: CircularProgressIndicator.strokeAlignCenter,
+         ),
+       );
+    }
 
     return ListView.builder(
       itemCount: favoriteItems.length,
       itemBuilder: (context, index) {
-        //final item = favoriteItems[index];
-        return Positioned(
-          // card1HeG (179:625)
-          left: 18,
-          top: 143,
-          child: Container(
-            padding: EdgeInsets.fromLTRB(12, 10, 32, 11),
-            width: 394,
-            height: 158,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              color: Color(0xffffffff),
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0x3f0d1e00),
-                  offset: Offset(0, 4),
-                  blurRadius: 2.5,
-                ),
-              ],
+        final itemData = favoriteItems[index];
+
+        // Extract data from the Firestore document
+        final type = itemData['type'] ?? "Unknown";
+        final amount = itemData['amount'] ?? 0.0;
+        final price = itemData['price'] ?? 0.0;
+        final description = itemData['description'] ?? "Unknown";
+        final imageUrl = itemData['imageURL'] ?? "DefaultImageUrl";
+
+        return FavouriteItemCard(
+          type: type,
+          amount: amount.toDouble(),
+          price: price.toDouble(),
+          description: description,
+          imageUrl: imageUrl,
+        );
+      },
+    );
+  }
+}
+
+class FavouriteItemCard extends StatelessWidget {
+  final String type;
+  final double amount;
+  final double price;
+  final String description;
+  final String imageUrl;
+
+  FavouriteItemCard({
+    required this.type,
+    required this.amount,
+    required this.price,
+    required this.description,
+    required this.imageUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(16),
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15),
+              bottomLeft: Radius.circular(15),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  // harvestofcarrotsjFN (179:629)
-                  margin: EdgeInsets.fromLTRB(0, 0, 12, 0),
-                  width: 170,
-                  height: 137,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ),
-                    // child: Image.network(
-                    //  item.imageUrl,
-                    //   fit: BoxFit.cover,
-                    // ),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              height: 155,
+              width: 150,
+              scale: 1,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8, left: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  type,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
                   ),
                 ),
-                Container(
-                  // autogroupfgic1Ct (QQiTkztZQh9VpgaGbPfgic)
-                  margin: EdgeInsets.fromLTRB(0, 6, 0, 2),
-                  width: 168,
-                  height: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(height: 5),
+                Text(
+                  '${amount.toStringAsFixed(2)} Kg',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  '${price.toStringAsFixed(2)}/=',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  '$description',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                ),
+                // Add edit and delete icons here
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 60,top: 10
+                  ),
+                  child: Row(
                     children: [
-                      Container(
-                        // carrotKjN (179:626)
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 9),
-                        child: Text(
-                          'Carrot',
-                          style: SafeGoogleFont(
-                            'Inter',
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                            height: 1.2125,
-                            color: Color(0xff000000),
+                       ElevatedButton(
+                        onPressed: () {
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => ItemDetailsPage(item: item),
+                          //   ),
+                          // );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xaf018241),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
+                          minimumSize: Size(0, 28),
                         ),
-                      ),
-                      Container(
-                        // totalharvest200kgRGc (179:627)
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 6),
                         child: Text(
-                          'Total Harvest :  200Kg',
-                          style: SafeGoogleFont(
-                            'Inter',
-                            fontSize: 16,
+                          'බලන්න',
+                          style: TextStyle(
+                            fontFamily: 'Iskoola Pota',
+                            fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            height: 1.2125,
-                            color: Color(0xff797373),
+                            color: Color(0xffffffff),
                           ),
                         ),
                       ),
-                      Container(
-                        // price1kgrs350XaY (179:628)
-                        margin: EdgeInsets.fromLTRB(3, 0, 0, 15),
-                        child: Text(
-                          'Price (1Kg) : Rs.350/=',
-                          style: SafeGoogleFont(
-                            'Inter',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            height: 1.2125,
-                            color: Color(0xff797373),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        // group19SBi (179:630)
-                        margin: EdgeInsets.fromLTRB(35, 0, 19, 0),
-                        width: double.infinity,
-                        height: 29,
-                        decoration: BoxDecoration(
-                          color: Color(0xaf018241),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'View',
-                            textAlign: TextAlign.center,
-                            style: SafeGoogleFont(
-                              'Inter',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              height: 1.2125,
-                              color: Color(0xffffffff),
-                            ),
-                          ),
-                        ),
+                      IconButton(
+                        icon: Icon(Icons.delete,
+                            size: 27, color: Color(0xFFAF0F03)),
+                        onPressed: () {
+                          // Implement delete logic here
+                          // You can show a confirmation dialog and delete the item if confirmed.
+                        },
                       ),
                     ],
                   ),
@@ -154,8 +198,8 @@ class _FavouriteCardState extends State<FavouriteCard> {
               ],
             ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

@@ -285,7 +285,6 @@ class _SignupPageState extends State<SignupPage> {
                             'role': userRole,
                             // Add other user data fields here...
                           });
-
                           // Create a new document with an auto-generated unique ID in the respective collection
                           if (userRole == "farmer") {
                             await FirebaseFirestore.instance
@@ -305,14 +304,14 @@ class _SignupPageState extends State<SignupPage> {
                               'password': password,
                               // Add other supplier data fields here...
                             });
-                          }
-                          else if (userRole == "agri_officer") {
+                          } else if (userRole == "agri_officer") {
                             await FirebaseFirestore.instance
                                 .collection('agri_officers')
                                 .add({
                               'userId': userId,
                               'email': email,
                               'password': password,
+                              'status':1,
                               // Add other supplier data fields here...
                             });
                           }
