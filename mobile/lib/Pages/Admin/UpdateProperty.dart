@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'DataInsertSuccessfullyDialog.dart';
+import 'FillAllFieldDialog.dart';
 
 class UpdateProperty extends StatefulWidget {
   final String documentId;
@@ -23,6 +25,24 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   String? selectedwatercomingmethod;
   String? selectedmainirrigationarea;
   String? selectedsubirrigationarea;
+
+  bool areFieldsEmpty() {
+    if (selectedprovince == null ||
+        selecteddistrict == null ||
+        selectedsecreterydivision == null ||
+        selectedagriculturedivision == null ||
+        selectedwatercomingmethod == null ||
+        selectedmainirrigationarea == null ||
+        selectedsubirrigationarea == null ||
+        areaController.text.isEmpty ||
+        commentController.text.isEmpty ||
+        propertynameController.text.isEmpty ||
+        ownernameController.text.isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   List<String> province = [
     "උතුරු පළාත",
@@ -115,6 +135,15 @@ class _UpdatePropertyState extends State<UpdateProperty> {
     fetchDataFromFirestore();
   }
 
+  void DataInsertSuccessfullyDialogpop() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return DataInsertSuccessfullyDialog();
+      },
+    );
+  }
+
   Future<void> fetchDataFromFirestore() async {
     try {
       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
@@ -167,6 +196,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       });
       // Print a success message or handle the update completion as needed.
       print('Document updated successfully');
+      DataInsertSuccessfullyDialogpop();
     } catch (e) {
       // Handle any errors that occur during the update.
       print("Error updating data in Firestore: $e");
@@ -219,8 +249,16 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                   String subirrigationarea = selectedsubirrigationarea ?? '';
 
                   // Process the data or make API calls as needed
-
-                  updateFirestoreDocument();
+                  if (areFieldsEmpty()) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return FillAllFieldDialog();
+                      },
+                    );
+                  } else {
+                    updateFirestoreDocument();
+                  }
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
@@ -234,7 +272,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                   ),
                 ),
                 child: Text(
-                  'ඇතුළත් කරන්න',
+                  'යාවත්කාලීන කරන්න',
                   style: TextStyle(fontSize: 15),
                 ),
               ),

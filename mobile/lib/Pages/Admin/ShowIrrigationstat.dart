@@ -1,18 +1,99 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'DataNotfoundDialog1.dart';
 
 class ShowIrrigationstat extends StatefulWidget {
+  final String? selecteddistrict;
+  final String? selectedwatercomingmethod;
+  final String? selectedmainirrigationarea;
+  final String? selectedsubirrigationarea;
+
+  ShowIrrigationstat({
+    this.selecteddistrict,
+    this.selectedwatercomingmethod,
+    this.selectedmainirrigationarea,
+    this.selectedsubirrigationarea,
+  });
+
   @override
   _ShowIrrigationstatState createState() => _ShowIrrigationstatState();
 }
 
 class _ShowIrrigationstatState extends State<ShowIrrigationstat> {
   double fem = 1.0; // Adjust this value as needed
+  String totalfarmers = '';
+  String totalarea = '';
+
+  String? district;
+  String? watercomingmethod;
+  String? mainirrigationarea;
+  String? subirrigationarea;
 
   @override
+  void initState() {
+    super.initState();
+    district = widget.selecteddistrict;
+    watercomingmethod = widget.selectedwatercomingmethod;
+    mainirrigationarea = widget.selectedmainirrigationarea;
+    subirrigationarea = widget.selectedsubirrigationarea;
+
+    fetchDatafromFirebase();
+  }
+
+  Future<void> fetchDatafromFirebase() async {
+    // Fetch data from firebase
+    // Set totalfarmers and totalarea
+    double totalArea = 0;
+    int totalFarmers = 0;
+    final firestore = FirebaseFirestore.instance;
+
+    final query = firestore
+        .collection("crops")
+        .where("waterSource", isEqualTo: watercomingmethod)
+        .where("mainIrrigationArea", isEqualTo: mainirrigationarea)
+        .where("subIrrigationArea", isEqualTo: subirrigationarea);
+
+    final querySnapshot = await query.get();
+
+    for (final doc in querySnapshot.docs) {
+      final data = doc.data() as Map<String, dynamic>;
+      final area = double.tryParse(data['area'] ?? '0') ?? 0.0;
+
+      totalArea += area;
+      totalFarmers++;
+    }
+
+    if (totalFarmers == 0) {
+      showDataNotFoundDialog();
+      totalFarmers = 0;
+      print("Total Farmers: $totalFarmers");
+    }
+
+    setState(() {
+      totalarea = totalArea.toStringAsFixed(2);
+      totalfarmers = totalFarmers.toString();
+    });
+  }
+
+  void showDataNotFoundDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return DataNotFoundDialog1();
+      },
+    );
+  }
+
   Widget build(BuildContext context) {
+    print("Selected District: ${widget.selecteddistrict}");
+    print(
+        "Selected Water Coming Method: ${widget.selectedwatercomingmethod ?? "null"}");
+    print(
+        "Selected Main Irrigation Area: ${widget.selectedmainirrigationarea ?? "null"}");
+    print(
+        "Selected Sub Irrigation Area: ${widget.selectedsubirrigationarea ?? "null"}");
+
     return Scaffold(
       appBar: AppBar(
         title: Text("වාරිමාර්ග සංඛ්‍යාලේඛන"),
@@ -76,7 +157,7 @@ class _ShowIrrigationstatState extends State<ShowIrrigationstat> {
                             ),
                           ),
                           Text(
-                            'වැව',
+                            widget.selectedwatercomingmethod ?? "null",
                             textAlign: TextAlign.right,
                             style: TextStyle(
                               color: Colors.black,
@@ -143,7 +224,7 @@ class _ShowIrrigationstatState extends State<ShowIrrigationstat> {
                             ),
                           ),
                           Text(
-                            '1500',
+                            totalfarmers,
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               color: Colors.black,
@@ -225,7 +306,7 @@ class _ShowIrrigationstatState extends State<ShowIrrigationstat> {
                             ),
                           ),
                           Text(
-                            '2000',
+                            totalarea,
                             textAlign: TextAlign.right,
                             style: TextStyle(
                               color: Colors.black,

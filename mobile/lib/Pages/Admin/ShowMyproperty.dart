@@ -1,14 +1,12 @@
-import 'dart:js_util';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'AddProperty.dart';
 import 'UpdateProperty.dart';
+import 'package:provider/provider.dart';
+import 'package:mobile/Pages/Common/login_page.dart';
 
 class MyProperty extends StatefulWidget {
-  final Map<String, dynamic> userData;
-  const MyProperty({required this.userData});
   @override
   _MyPropertyState createState() => _MyPropertyState();
 }
@@ -23,24 +21,24 @@ class _MyPropertyState extends State<MyProperty> {
   List<Map<String, dynamic>> properties = [];
 
   int selectedPropertyIndex = -1;
-  
-  
-
-  
+  String loginEmail = '';
 
   @override
   void initState() {
     super.initState();
+    loginEmail = Provider.of<LoginEmailProvider>(context, listen: false).email;
     Firebase.initializeApp();
     fetchDataFromFirestore();
-     // Fetch data from Firestore when the widget is initialized
+    // Fetch data from Firestore when the widget is initialized
   }
 
   Future fetchDataFromFirestore() async {
     try {
       // Retrieve property data from Firestore
-      QuerySnapshot querySnapshot =
-          await firestore.collection('properties').get();
+      QuerySnapshot querySnapshot = await firestore
+          .collection('properties')
+          .where('email', isEqualTo: loginEmail)
+          .get();
       final List<QueryDocumentSnapshot> propertyDocuments = querySnapshot.docs;
 
       List<Map<String, dynamic>> propertiesData = [];
@@ -63,6 +61,7 @@ class _MyPropertyState extends State<MyProperty> {
       print("Error fetching data from Firestore: $e");
     }
   }
+
   void deletePropertyCallback(String documentId) {
     deleteProperty(documentId);
   }
@@ -79,6 +78,7 @@ class _MyPropertyState extends State<MyProperty> {
 
   @override
   Widget build(BuildContext context) {
+    print('Login Email: $loginEmail');
     return Scaffold(
       appBar: AppBar(
         title: Text("My Properties"),
@@ -167,7 +167,6 @@ class _MyPropertyState extends State<MyProperty> {
                     onDelete: () {
                       deletePropertyCallback(property['documentId']);
                     },
-                    
                   );
                 },
               ),
@@ -202,13 +201,14 @@ class PropertyContainer extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: double.infinity,
-        height: isSelected ? 140 : 92,
+        height: isSelected ? 160 : 92,
         margin: EdgeInsets.all(8),
         clipBehavior: Clip.antiAlias,
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
-            side: BorderSide(width: 3, color: Color(0xFF8BF089)),
+            side:
+                BorderSide(width: 3, color: Color.fromARGB(255, 166, 240, 137)),
             borderRadius: BorderRadius.circular(15 * fem),
           ),
           shadows: [
@@ -243,7 +243,7 @@ class PropertyContainer extends StatelessWidget {
                 'Acres: ${property['area']}',
                 style: TextStyle(
                   color: Color(0xFF797373),
-                  fontSize: 13,
+                  fontSize: 15,
                   fontFamily: 'Iskoola Pota',
                   fontWeight: FontWeight.w400,
                   height: 0,
@@ -257,7 +257,7 @@ class PropertyContainer extends StatelessWidget {
                 'Water Source: ${property['watercomingmethod']}',
                 style: TextStyle(
                   color: Color(0xFF797373),
-                  fontSize: 13,
+                  fontSize: 15,
                   fontFamily: 'Iskoola Pota',
                   fontWeight: FontWeight.w400,
                   height: 0,
@@ -271,7 +271,7 @@ class PropertyContainer extends StatelessWidget {
                 'Owner: ${property['ownername']}',
                 style: TextStyle(
                   color: Color(0xFF797373),
-                  fontSize: 13,
+                  fontSize: 15,
                   fontFamily: 'Iskoola Pota',
                   fontWeight: FontWeight.w400,
                   height: 0,
@@ -285,7 +285,7 @@ class PropertyContainer extends StatelessWidget {
                 'District: ${property['district']}',
                 style: TextStyle(
                   color: Color(0xFF797373),
-                  fontSize: 13,
+                  fontSize: 15,
                   fontFamily: 'Iskoola Pota',
                   fontWeight: FontWeight.w400,
                   height: 0,
@@ -293,24 +293,10 @@ class PropertyContainer extends StatelessWidget {
               ),
             ),
             // Display the document ID within the card
-            Positioned(
-              left: 18,
-              top: 85, // Adjust the position as needed
-              child: Text(
-                'Document ID: $documentId', // Display the document ID
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 13,
-                  fontFamily: 'Iskoola Pota',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
-                ),
-              ),
-            ),
             if (isSelected)
               Positioned(
-                right: 18,
-                top: 110, // Adjust the position as needed
+                right: 23,
+                top: 100, // Adjust the position as needed
                 child: Row(
                   children: [
                     ElevatedButton(
