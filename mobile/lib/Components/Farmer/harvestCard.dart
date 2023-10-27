@@ -59,7 +59,7 @@ class _HarvestCardState extends State<HarvestCard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Item: ${itemData['type']}'),
+          title: Text('යාවත්කාලීන කරන්න:'),
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
@@ -134,13 +134,13 @@ class _HarvestCardState extends State<HarvestCard> {
                   }
                 });
               },
-              child: Text('Save Changes'),
+              child: Text('යාවත්කාලීන කරන්න'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog without saving
               },
-              child: Text('Cancel'),
+              child: Text('අවලංගු කරන්න'),
             ),
           ],
         );

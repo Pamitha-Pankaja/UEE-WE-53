@@ -18,20 +18,23 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   void initState() {
     super.initState();
     // Initialize the Future to fetch user details
+  //  print('farmer: ${widget.item.userId}');
     userDataFuture = fetchUserDetails();
   }
 
   Future<void> fetchUserDetails() async {
+    print('farmer: ${widget.item}');
     final querySnapshot = await FirebaseFirestore.instance
         .collection('farmers')
         .where('userId', isEqualTo: widget.item.userId)
         .get();
 
-    if (querySnapshot.docs.isNotEmpty) {
+  
       setState(() {
         userData = querySnapshot.docs[0].data() as Map<String, dynamic>;
+        print('farmerData: $userData');
       });
-    }
+
   }
 
   @override

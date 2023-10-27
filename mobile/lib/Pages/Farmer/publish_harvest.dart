@@ -106,64 +106,6 @@ class _PublishHarvestState extends State<PublishHarvest> {
       ),
     );
   }
-
-  // Widget buildDropdownField(
-  //   String? selectedValue,
-  //   List<String> items,
-  //   String labelText,
-  // ) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(bottom: 16.0),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           labelText,
-  //           style: TextStyle(
-  //             fontSize: 18.0,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //         Padding(
-  //           padding: const EdgeInsets.all(8.0),
-  //           child: Container(
-  //             decoration: BoxDecoration(
-  //               borderRadius: BorderRadius.circular(10.0),
-  //               color: Colors.white,
-  //               boxShadow: [
-  //                 BoxShadow(
-  //                   color: Colors.grey.withOpacity(1.0),
-  //                   spreadRadius: 2,
-  //                   blurRadius: 5,
-  //                   offset: Offset(0, 2),
-  //                 ),
-  //               ],
-  //             ),
-  //             child: DropdownButtonFormField<String>(
-  //               value: selectedValue,
-  //               onChanged: (newValue) {
-  //                 setState(() {
-  //                   selectedValue = newValue;
-  //                 });
-  //               },
-  //               items: items.map((item) {
-  //                 return DropdownMenuItem(
-  //                   value: item,
-  //                   child: Text(item),
-  //                 );
-  //               }).toList(),
-  //               decoration: InputDecoration(
-  //                 contentPadding: const EdgeInsets.all(16.0),
-  //                 border: InputBorder.none,
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget buildInputField(
     TextEditingController controller,
     String labelText,
@@ -345,10 +287,18 @@ class _PublishHarvestState extends State<PublishHarvest> {
         print('Please select an image.');
       }
     } catch (e) {
-      _showAlertDialog(Icons.warning, 'Error', 'An Error Occured', false);
+      await showCustomAlertDialog(
+          context: context,
+          title: 'අසාර්ථකයි',
+          message: 'අස්වැන්න පළ කිරීම අසාර්ථකයි',
+          buttonText: 'අවලංගු කරන්න',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          isSuccess: true,
+        );
     }
   }
-
   Future<String> _uploadImage(File image, String userId) async {
     final Reference storageRef =
         _storage.ref().child('user_images/$userId/${DateTime.now()}.jpg');
@@ -363,40 +313,6 @@ class _PublishHarvestState extends State<PublishHarvest> {
       throw e;
     }
   }
-
-  void _showAlertDialog(
-      IconData iconData, String title, String message, bool isSuccess) {
-    Color iconColor = isSuccess
-        ? Colors.green
-        : Colors.red; // Determine icon color based on success
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(
-                iconData,
-                color: iconColor, // Set the color of the icon here
-              ),
-              SizedBox(width: 8),
-              Text(title),
-            ],
-          ),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('හරි'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future<void> showCustomAlertDialog({
     required BuildContext context,
     required String title,

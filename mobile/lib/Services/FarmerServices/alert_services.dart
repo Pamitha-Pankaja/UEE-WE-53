@@ -81,17 +81,16 @@ class CustomAlertDialog extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: 92,
-              top: 0,
-              child: isSuccess
-                  ? Container()
-                  : Image.asset(
-                      'assets/Ok.png',
-                      width: 100,
-                      height: 90,
-                      fit: BoxFit.contain,
-                    )
-            ),
+                left: 92,
+                top: 0,
+                child: isSuccess
+                    ? Container()
+                    : Image.asset(
+                        'assets/Ok.png',
+                        width: 100,
+                        height: 90,
+                        fit: BoxFit.contain,
+                      )),
             Positioned(
               left: 92,
               top: 0,
@@ -110,7 +109,9 @@ class CustomAlertDialog extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onButtonPressed,
                 style: ElevatedButton.styleFrom(
-                  primary: Color(0xAF018241),
+                  primary: isSuccess
+                      ?  Color(0xAF018241)
+                      : Color.fromARGB(172, 251, 9, 9),
                   minimumSize: Size(95, 40),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),

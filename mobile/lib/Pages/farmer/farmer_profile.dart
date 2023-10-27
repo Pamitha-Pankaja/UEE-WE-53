@@ -35,7 +35,8 @@ class _FarmerProfileState extends State<FarmerProfile> {
 
   List<File> _profileImages = [];
   int _currentImageIndex = 0;
-  final FarmerProfileService _farmerProfileService = FarmerProfileService(); // Instantiate your service
+  final FarmerProfileService _farmerProfileService =
+      FarmerProfileService(); // Instantiate your service
 
   @override
   void initState() {
@@ -75,7 +76,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Profile"),
+        title: const Text("මගේ ගිණුම"),
         backgroundColor: const Color.fromARGB(255, 1, 130, 65),
         leading: Builder(
           builder: (BuildContext context) {
@@ -119,7 +120,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
                                   : '',
                               style: TextStyle(
                                 fontSize: 38.0,
-                                color: Colors.white,
+                                color: Color.fromARGB(255, 14, 151, 82),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -146,7 +147,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
                   children: [
                     buildEditableField(
                       farmerNameController,
-                      'Name',
+                      'නම',
                       farmerNameEditMode,
                       () {
                         setState(() {
@@ -157,7 +158,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
                     ),
                     buildEditableField(
                       emailController,
-                      'Email',
+                      'ඊතැපැල් ලිපිනය',
                       emailEditMode,
                       () {
                         setState(() {
@@ -168,7 +169,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
                     ),
                     buildEditableField(
                       passwordController,
-                      'Password',
+                      'මුරපදය',
                       passwordEditMode,
                       () {
                         setState(() {
@@ -179,7 +180,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
                     ),
                     buildEditableField(
                       addressController,
-                      'Address',
+                      'ලිපිනය',
                       addressEditMode,
                       () {
                         setState(() {
@@ -190,7 +191,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
                     ),
                     buildEditableField(
                       contactController,
-                      'Contact',
+                      'දුරකථන අංකය',
                       contactEditMode,
                       () {
                         setState(() {
@@ -213,20 +214,20 @@ class _FarmerProfileState extends State<FarmerProfile> {
                 SizedBox(
                   width: 150.0,
                   height: 50.0,
-                  child: FloatingActionButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       updateProfile();
                     },
-                    backgroundColor: Color.fromARGB(255, 90, 121, 141),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    child: const Text(
-                      'Update',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xaf018241),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
+                    ),
+                    child: Text(
+                      'යාවත්කාලීන කරන්න',
+                      style: TextStyle(fontSize: 13),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -313,11 +314,11 @@ class _FarmerProfileState extends State<FarmerProfile> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.only(left: 20.0),
+          padding: EdgeInsets.only(left: 20.0, top: 16),
           child: Text(
-            'Profile Image',
+            'පින්තුරය',
             style: TextStyle(
-              fontSize: 18.0,
+              fontSize: 16.0,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -363,7 +364,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
                     height: 100,
                   )
                 else
-                  Text("No image selected"),
+                  Text("රූපයක් තෝරා නැත"),
               ],
             ),
           ),
@@ -380,7 +381,7 @@ class _FarmerProfileState extends State<FarmerProfile> {
     }
   }
 
- Future<void> updateProfile() async {
+  Future<void> updateProfile() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final userId = user.uid;
