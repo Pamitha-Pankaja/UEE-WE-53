@@ -44,7 +44,7 @@ class _FarmerNavBarState extends State<FarmerNavBar> with TickerProviderStateMix
       bottomNavigationBar: MotionTabBar(
         controller: _motionTabBarController,
         initialSelectedTab: "මුල් පිටුව",
-        labels: const ["ගිණුම","මුල් පිටුව","කරත්තය"],
+        labels: const ["ගිණුම","මුල් පිටුව","Q&A"],
         icons: const [
           Icons.person,
           Icons.home,
