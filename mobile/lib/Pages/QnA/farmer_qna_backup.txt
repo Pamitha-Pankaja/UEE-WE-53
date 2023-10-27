@@ -88,7 +88,7 @@ class _QnAState extends State<QnAPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("ප්‍රශ්න සහ පිළිතුරු"),
+        title: const Text("Q&A"),
         backgroundColor: const Color.fromARGB(255, 42, 175, 46),
       ),
       body: Column(
@@ -173,7 +173,7 @@ class _QnAState extends State<QnAPage> {
                     ),
                   ),
                 ),
-                child: const Text("සියලු ප්‍රශ්න"),
+                child: const Text("All Questions"),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -204,7 +204,7 @@ class _QnAState extends State<QnAPage> {
                     ),
                   ),
                 ),
-                child: const Text("මගේ ප්‍රශ්න"),
+                child: const Text("My Questions"),
               ),
             ],
           ),
@@ -271,7 +271,7 @@ class _QnAState extends State<QnAPage> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 8.0),
+                      padding: EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 8.0),
                       child: Text(
                         question['questionDescription'] ??
                             '', // Use questionDescription here
@@ -309,7 +309,7 @@ class _QnAState extends State<QnAPage> {
                       width: double.infinity,
                       margin: const EdgeInsets.all(8.0),
                       child: Text(
-                        hasAnswer ? "තවම පිළිතුරක් නැත" : question['answer']!,
+                        hasAnswer ? "No Answer Yet" : question['answer']!,
                         style: const TextStyle(color: Colors.black),
                       ),
                     ),
@@ -368,93 +368,82 @@ class _QnAState extends State<QnAPage> {
         double dialogWidth =
             MediaQuery.of(context).size.width * 0.9; // Adjust the desired width
 
-        return SizedBox(
+        return Container(
           width: dialogWidth,
           child: AlertDialog(
-            title: const Text(
-              'ප්‍රශ්නය සංස්කරණය කරන්න',
-              style: TextStyle(color: Colors.black),
+            title: const Text('Edit Question'),
+            content: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: questionController,
+                    decoration: InputDecoration(
+                      labelText: 'New Question',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: const BorderSide(
+                          color: Colors.green,
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: descriptionController,
+                    maxLines:
+                        null, // Allow the description field to scale automatically
+                    decoration: InputDecoration(
+                      labelText: 'New Description',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: const BorderSide(
+                          color: Colors.green,
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            content: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: questionController,
-                      decoration: InputDecoration(
-                        labelText: 'ප්‍රශ්නය',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                            color: Colors.green,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: descriptionController,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        labelText: 'විස්තරය',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                            color: Colors.green,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          final firestore = FirebaseFirestore.instance;
-                          await firestore
-                              .collection('questions_and_answers')
-                              .doc(question['docID'])
-                              .update({
-                            'question': questionController.text,
-                            'questionDescription': descriptionController.text,
-                          });
-
-                          Navigator.pop(context);
-                          await fetchQuestions();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.green, // Background color
-                          onPrimary: Colors.white, // Text color
-                        ),
-                        child: const Text('යාවත්කාලීන කරන්න'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.red, // Background color
-                          onPrimary: Colors.white, // Text color
-                        ),
-                        child: const Text('අවලංගු කරන්න'),
-                      ),
-                    ],
-                  ),
-                ],
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
               ),
-            ),
+              TextButton(
+                onPressed: () async {
+                  // Update the question in Firestore
+                  final firestore = FirebaseFirestore.instance;
+                  await firestore
+                      .collection('questions_and_answers')
+                      .doc(question['docID'])
+                      .update({
+                    'question': questionController.text,
+                    'questionDescription': descriptionController.text,
+                  });
+
+                  // Close the dialog
+                  Navigator.pop(context);
+
+                  // Fetch updated data
+                  await fetchQuestions();
+                },
+                child: const Text('Save'),
+              ),
+            ],
           ),
         );
       },
@@ -467,18 +456,14 @@ class _QnAState extends State<QnAPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title:
-              const Text('ප්‍රශ්නය මකන්න', style: TextStyle(color: Colors.red)),
-          content: const Text('ඔබට මෙම ප්‍රශ්නය මැකීමට අවශ්‍ය බව විශ්වාසද?'),
+          title: const Text('Delete Question'),
+          content: const Text('Are you sure you want to delete this question?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text(
-                'අවලංගු කරන්න',
-                style: TextStyle(color: Colors.red),
-              ),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
@@ -495,7 +480,7 @@ class _QnAState extends State<QnAPage> {
                 // Fetch updated data
                 await fetchQuestions();
               },
-              child: const Text('මකන්න'),
+              child: const Text('Delete'),
             ),
           ],
         );

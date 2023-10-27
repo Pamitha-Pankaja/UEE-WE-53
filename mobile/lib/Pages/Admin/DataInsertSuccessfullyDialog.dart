@@ -60,7 +60,7 @@ class DataInsertSuccessfullyDialog extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: 'SUCCESS\n',
+                                text: 'සාර්ථකයි\n',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 24, // Adjusted font size

@@ -1,38 +1,38 @@
 import 'package:flutter/material.dart';
-import 'SelectIrrigationstat.dart';
 
-class DataNotFoundDialog1 extends StatelessWidget {
+class filterQnA extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 280,
-        height: 320,
+        width: 280, // Adjusted width
+        height: 320, // Adjusted height
         child: Stack(
           children: [
             Positioned(
               left: 0,
-              top: 45,
+              top: 45, // Adjusted top position
               child: Container(
-                width: 280,
-                height: 275,
+                width: 280, // Adjusted width
+                height: 275, // Adjusted height
                 child: Stack(
                   children: [
                     Positioned(
                       left: 0,
                       top: 0,
                       child: Container(
-                        width: 280,
-                        height: 275,
+                        width: 280, // Adjusted width
+                        height: 275, // Adjusted height
                         decoration: ShapeDecoration(
                           color: Color(0xFFF5F5F5),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(
+                                15), // Adjusted border radius
                           ),
                           shadows: [
                             BoxShadow(
                               color: Color(0x3F000000),
-                              blurRadius: 15,
+                              blurRadius: 15, // Adjusted blur radius
                               offset: Offset(0, 4),
                               spreadRadius: 5,
                             ),
@@ -42,10 +42,10 @@ class DataNotFoundDialog1 extends StatelessWidget {
                     ),
                     Positioned(
                       left: 18,
-                      top: 45,
+                      top: 45, // Adjusted top position
                       child: SizedBox(
-                        width: 243,
-                        height: 130,
+                        width: 243, // Adjusted width
+                        height: 130, // Adjusted height
                         child: Text.rich(
                           TextSpan(
                             children: [
@@ -53,16 +53,16 @@ class DataNotFoundDialog1 extends StatelessWidget {
                                 text: '\n ',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 18,
+                                  fontSize: 18, // Adjusted font size
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               TextSpan(
-                                text: 'දෝෂයකි\n',
+                                text: 'SUCCESS\n',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 24,
+                                  fontSize: 24, // Adjusted font size
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -71,16 +71,16 @@ class DataNotFoundDialog1 extends StatelessWidget {
                                 text: '\n',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 18,
+                                  fontSize: 18, // Adjusted font size
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               TextSpan(
-                                text: 'තොරතුරු සොයාගැනීමට නොහැක..\n',
+                                text: 'Property details updated successfully\n',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 16,
+                                  fontSize: 16, // Adjusted font size
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -89,7 +89,7 @@ class DataNotFoundDialog1 extends StatelessWidget {
                                 text: '\n',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 18,
+                                  fontSize: 18, // Adjusted font size
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -102,28 +102,24 @@ class DataNotFoundDialog1 extends StatelessWidget {
                     ),
                     Positioned(
                       left: 92,
-                      top: 200,
+                      top: 200, // Adjusted top position
                       child: ElevatedButton(
                         onPressed: () {
-                          // Navigate to the AdminCropStatistic screen
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => SelectIrrigationstat(),
-                            ),
-                          );
+                          Navigator.of(context).pop(); // Close the dialog
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(173, 238, 114, 76),
-                          minimumSize: Size(95, 40),
+                          primary: Color(0xAF018241),
+                          minimumSize: Size(95, 40), // Adjusted size
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(
+                                15), // Adjusted border radius
                           ),
                         ),
                         child: Text(
-                          'ආපසු',
+                          'OK',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20,
+                            fontSize: 20, // Adjusted font size
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w600,
                           ),
@@ -138,11 +134,11 @@ class DataNotFoundDialog1 extends StatelessWidget {
               left: 92,
               top: 0,
               child: Container(
-                width: 100,
-                height: 90,
+                width: 100, // Adjusted width
+                height: 90, // Adjusted height
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/Error.png'),
+                    image: AssetImage('assets/Ok.png'),
                     fit: BoxFit.contain,
                   ),
                 ),

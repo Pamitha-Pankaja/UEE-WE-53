@@ -58,7 +58,7 @@ class FillAllFieldDialog extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: 'WARNING\n',
+                                text: 'අවවාදයයි\n',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 24,

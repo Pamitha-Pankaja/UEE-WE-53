@@ -34,6 +34,20 @@ class _CustomDialogState extends State<CustomDialog> {
       );
     }
 
+    // Function to create a styled text with margin at the top and bottom, aligned to the left
+    Widget buildTextWithMargin(String text) {
+      return Container(
+        margin: EdgeInsets.symmetric(vertical: 8.0), // Add margin to the top and bottom
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            text,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
     return AlertDialog(
       title: Text("Add a Question"),
       content: Container(
@@ -41,13 +55,7 @@ class _CustomDialogState extends State<CustomDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Question Topic:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+            buildTextWithMargin("Question Topic:"), // Add margin and align to the left
             buildInputBox(
               TextField(
                 controller: _topicController,
@@ -58,14 +66,7 @@ class _CustomDialogState extends State<CustomDialog> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Question Description:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+            buildTextWithMargin("Question Description:"), // Add margin and align to the left
             buildInputBox(
               TextField(
                 controller: _descriptionController,
@@ -76,14 +77,7 @@ class _CustomDialogState extends State<CustomDialog> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Crop Type:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+            buildTextWithMargin("Crop Type:"), // Add margin and align to the left
             Align(
               alignment: Alignment.centerLeft,
               child: buildInputBox(
@@ -106,14 +100,7 @@ class _CustomDialogState extends State<CustomDialog> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Upload Images:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+            buildTextWithMargin("Upload Images:"), // Add margin and align to the left
             buildInputBox(
               ElevatedButton(
                 onPressed: () {
@@ -122,7 +109,6 @@ class _CustomDialogState extends State<CustomDialog> {
                 child: Text("Upload Images"),
               ),
             ),
-            SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -155,5 +141,3 @@ class _CustomDialogState extends State<CustomDialog> {
     );
   }
 }
-
-
