@@ -295,7 +295,7 @@ class _PublishHarvestState extends State<PublishHarvest> {
           onButtonPressed: () {
             Navigator.of(context).pop(); // Close the dialog
           },
-          isSuccess: true,
+          isSuccess: false,
         );
     }
   }

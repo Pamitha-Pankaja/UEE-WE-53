@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class ItemDetailsPage extends StatefulWidget {
   final item;
@@ -17,24 +18,18 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize the Future to fetch user details
-  //  print('farmer: ${widget.item.userId}');
     userDataFuture = fetchUserDetails();
   }
 
   Future<void> fetchUserDetails() async {
-    print('farmer: ${widget.item}');
     final querySnapshot = await FirebaseFirestore.instance
         .collection('farmers')
         .where('userId', isEqualTo: widget.item.userId)
         .get();
 
-  
-      setState(() {
-        userData = querySnapshot.docs[0].data() as Map<String, dynamic>;
-        print('farmerData: $userData');
-      });
-
+    setState(() {
+      userData = querySnapshot.docs[0].data() as Map<String, dynamic>;
+    });
   }
 
   @override
@@ -65,9 +60,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
 
   Widget buildItemDetails() {
     return Column(
-     
       children: [
-        // Your existing code to display item details
         Container(
           width: double.infinity,
           height: 200,
@@ -87,7 +80,6 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Rest of your UI code here, use userData where needed
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -147,8 +139,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                     width: 20,
                   ),
                   Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start, // Align items to the left
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('${userData['farmerName']}',
                           style: TextStyle(
@@ -158,19 +149,56 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                       SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(Icons.location_pin, size: 36,color: Color.fromARGB(255, 23, 124, 0),),
+                          Icon(Icons.location_pin,
+                              size: 36, color: Color.fromARGB(255, 23, 124, 0)),
                           Text('${userData['address']}',
                               style: TextStyle(
                                 fontSize: 15,
                               )),
                         ],
                       ),
-                      //Text('${userData['contact']}'),
                     ],
                   ),
                 ],
               ),
-              
+            ],
+          ),
+        ),
+        SizedBox(height: 30),
+        Center(
+          child: Column(
+            children: [
+              const SizedBox(height: 14.0),
+              SizedBox(
+                width: 150.0,
+                height: 50.0,
+                child: ElevatedButton(
+                  onPressed: ()  async {
+                   await FlutterPhoneDirectCaller.callNumber(userData['contact']);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xAF018241),
+                    minimumSize: Size(95, 40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.call_rounded),
+                      SizedBox(width: 8),
+                      const Text(
+                        'අමතන්න',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 45.0),
             ],
           ),
         ),
