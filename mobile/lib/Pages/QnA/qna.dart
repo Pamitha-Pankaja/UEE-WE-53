@@ -13,7 +13,7 @@ class _QnAState extends State<QnA> {
     {
       'question': 'Question 1',
       'imagePath': 'assets/qna/qna1.jpg',
-      'answer': 'meka thama answer eka'
+      'answer': 'meka thamaaaa answer eka'
     },
     {'question': 'Question 2', 'imagePath': 'assets/qna/qna2.jpeg'},
     {'question': 'Question 3', 'imagePath': 'assets/qna/qna3.jpg'},
