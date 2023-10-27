@@ -24,54 +24,69 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
 
   Future<void> _login() async {
-    try {
-      final String email = emailController.text;
-      final String password = passwordController.text;
+  try {
+    final String email = emailController.text;
+    final String password = passwordController.text;
 
-      if (email == 'admin@srigoviya.com' && password == 'admin@srigoviya.com') {
-        Navigator.pushNamed(context, '/admin_home');
-      }
-
-      // Sign in the user with Firebase Authentication
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      context.read<LoginEmailProvider>().setEmail(email);
-
-      // Fetch the user's role from Firestore
-      String uid = userCredential.user!.uid;
-      String userRole = await _getUserRole(uid);
-
-      // Navigate based on the user's role and pass the email
-      if (userRole == "farmer") {
-        Navigator.pushNamed(context, '/farmer_nav', arguments: {
-          'email': email,
-          'password': password,
-          'role': userRole,
-          'uid': uid
-        });
-      } else if (userRole == "buyer") {
-        Navigator.pushNamed(context, '/buyer_nav', arguments: {
-          'email': email,
-          'password': password,
-          'role': userRole,
-          'uid': uid
-        });
-      } else if (userRole == "agri_officer") {
-        //Navigator.pushNamed(context, '/sp_navbar', arguments: {'email': email, 'password': password, 'role': userRole, 'uid': uid});
-      }
-
-      // Clear the text fields after successful login
-      emailController.clear();
-      passwordController.clear();
-    } catch (e) {
-      // Handle login errors (e.g., invalid credentials)
-      print('Error during login: $e');
+    if (email == 'admin@srigoviya.com' && password == 'admin@srigoviya.com') {
+      Navigator.pushNamed(context, '/admin_home');
     }
+
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    context.read<LoginEmailProvider>().setEmail(email);
+
+    String uid = userCredential.user!.uid;
+    String userRole = await _getUserRole(uid);
+
+    if (userRole == "farmer") {
+      Navigator.pushNamed(context, '/farmer_nav', arguments: {
+        'email': email,
+        'password': password,
+        'role': userRole,
+        'uid': uid
+      });
+    } else if (userRole == "buyer") {
+      Navigator.pushNamed(context, '/buyer_nav', arguments: {
+        'email': email,
+        'password': password,
+        'role': userRole,
+        'uid': uid
+      });
+    } else if (userRole == "agri_officer") {
+      //Navigator.pushNamed(context, '/sp_navbar', arguments: {'email': email, 'password': password, 'role': userRole, 'uid': uid});
+    }
+
+    emailController.clear();
+    passwordController.clear();
+  } catch (e) {
+    // Handle login errors (e.g., invalid credentials)
+    print('Error during login: $e');
+    
+    // Show a popup message for authentication error
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Login Failed'),
+          content: Text('Invalid email or password. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
+}
 
   Future<String> _getUserRole(String uid) async {
     // Fetch user role from Firestore based on the user's UID
