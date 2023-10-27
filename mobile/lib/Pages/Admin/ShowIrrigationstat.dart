@@ -97,7 +97,7 @@ class _ShowIrrigationstatState extends State<ShowIrrigationstat> {
     return Scaffold(
       appBar: AppBar(
         title: Text("වාරිමාර්ග සංඛ්‍යාලේඛන"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
       body: Column(
         children: [

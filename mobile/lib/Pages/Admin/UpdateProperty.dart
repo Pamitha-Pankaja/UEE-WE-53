@@ -208,7 +208,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
     return Scaffold(
       appBar: AppBar(
         title: Text("දේපල යාවත්කාලීන කිරඓම"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -235,18 +235,18 @@ class _UpdatePropertyState extends State<UpdateProperty> {
               child: ElevatedButton(
                 onPressed: () {
                   // Handle form submission
-                  String province = selectedprovince ?? '';
-                  String district = selecteddistrict ?? '';
-                  String secreterydivision = selectedsecreterydivision ?? '';
-                  String area = areaController.text;
-                  String comment = commentController.text;
-                  String agriculturedivision =
-                      selectedagriculturedivision ?? '';
-                  String propertyname = propertynameController.text;
-                  String ownername = ownernameController.text;
-                  String watercomingmethod = selectedwatercomingmethod ?? '';
-                  String mainirrigationarea = selectedmainirrigationarea ?? '';
-                  String subirrigationarea = selectedsubirrigationarea ?? '';
+                  // String province = selectedprovince ?? '';
+                  // String district = selecteddistrict ?? '';
+                  // String secreterydivision = selectedsecreterydivision ?? '';
+                  // String area = areaController.text;
+                  // String comment = commentController.text;
+                  // String agriculturedivision =
+                  //     selectedagriculturedivision ?? '';
+                  // String propertyname = propertynameController.text;
+                  // String ownername = ownernameController.text;
+                  // String watercomingmethod = selectedwatercomingmethod ?? '';
+                  // String mainirrigationarea = selectedmainirrigationarea ?? '';
+                  // String subirrigationarea = selectedsubirrigationarea ?? '';
 
                   // Process the data or make API calls as needed
                   if (areFieldsEmpty()) {
