@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:mobile/Services/FarmerServices/alert_services.dart';
 import 'package:mobile/Services/FarmerServices/farmer_profile_services.dart';
 
 class PublishHarvest extends StatefulWidget {
@@ -16,8 +17,8 @@ class PublishHarvest extends StatefulWidget {
 }
 
 class _PublishHarvestState extends State<PublishHarvest> {
-
-  Map<String, dynamic> userProfile = Map<String, dynamic>(); // Initialize userData
+  Map<String, dynamic> userProfile =
+      Map<String, dynamic>(); // Initialize userData
 
   @override
   void initState() {
@@ -57,16 +58,16 @@ class _PublishHarvestState extends State<PublishHarvest> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 50),
-            buildInputField(typeController, 'Crop Type'),
+            buildInputField(typeController, 'බෝග වර්ගය'),
             SizedBox(height: 16),
-            buildInputField(amountController, 'Total Harvest'),
+            buildInputField(amountController, 'සම්පූර්ණ අස්වැන්න'),
             SizedBox(height: 16),
-            buildInputField(priceController, 'Price (per 1kg)'),
+            buildInputField(priceController, 'මිල (1kg සඳහා)'),
             SizedBox(height: 16),
-            buildInputField(descController, 'Description'),
+            buildInputField(descController, 'විස්තර'),
             SizedBox(height: 16),
             buildImageUploadButton(),
-            SizedBox(height: 16),
+            SizedBox(height: 30),
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -88,12 +89,12 @@ class _PublishHarvestState extends State<PublishHarvest> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xaf018241),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          minimumSize: Size(100, 45),
-                        ),
+                  backgroundColor: Color(0xaf018241),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  minimumSize: Size(100, 45),
+                ),
                 child: Text(
                   'පළ කරන්න',
                   style: TextStyle(fontSize: 15),
@@ -215,7 +216,7 @@ class _PublishHarvestState extends State<PublishHarvest> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Upload Image',
+          'රූපය උඩුගත කරන්න',
           style: TextStyle(
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -264,7 +265,7 @@ class _PublishHarvestState extends State<PublishHarvest> {
                       height: 100,
                     )
                 else
-                  Text("No image selected"),
+                  Text("රූපයක් තෝරා නැත"),
               ],
             ),
           ),
@@ -326,14 +327,25 @@ class _PublishHarvestState extends State<PublishHarvest> {
             'items': [harvestData],
           });
         }
+        await showCustomAlertDialog(
+          context: context,
+          title: 'සාර්ථකයි',
+          message: 'අස්වැන්න සාර්ථකව පළ කරන ලදී.',
+          buttonText: 'හරි',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          isSuccess: true,
+        );
 
+        // _showAlertDialog( Icons.check,'සාර්ථකයි', 'අස්වැන්න සාර්ථකව පළ කරන ලදී.',true);
         // Print some feedback
         print('Data saved to Firestore.');
       } else {
         print('Please select an image.');
       }
     } catch (e) {
-      print('Error: $e');
+      _showAlertDialog(Icons.warning, 'Error', 'An Error Occured', false);
     }
   }
 
@@ -350,5 +362,60 @@ class _PublishHarvestState extends State<PublishHarvest> {
       print('Error uploading image: $e');
       throw e;
     }
+  }
+
+  void _showAlertDialog(
+      IconData iconData, String title, String message, bool isSuccess) {
+    Color iconColor = isSuccess
+        ? Colors.green
+        : Colors.red; // Determine icon color based on success
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(
+                iconData,
+                color: iconColor, // Set the color of the icon here
+              ),
+              SizedBox(width: 8),
+              Text(title),
+            ],
+          ),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('හරි'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showCustomAlertDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    required String buttonText,
+    required VoidCallback onButtonPressed,
+    required bool isSuccess,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: title,
+          message: message,
+          buttonText: buttonText,
+          onButtonPressed: onButtonPressed,
+          isSuccess: isSuccess,
+        );
+      },
+    );
   }
 }
