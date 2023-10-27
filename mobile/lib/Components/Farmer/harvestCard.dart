@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mobile/Services/FarmerServices/alert_services.dart';
 
 class HarvestCard extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -46,7 +47,7 @@ class _HarvestCardState extends State<HarvestCard> {
     TextEditingController descriptionController =
         TextEditingController(text: itemData['description'] as String);
     TextEditingController imageController =
-        TextEditingController(text: itemData['imageURL'] as String);    
+        TextEditingController(text: itemData['imageURL'] as String);
     TextEditingController priceController =
         TextEditingController(text: itemData['price'].toString());
     TextEditingController amountController =
@@ -54,7 +55,8 @@ class _HarvestCardState extends State<HarvestCard> {
 
     final userId = widget.userData['uid'];
 
-    ScaffoldMessenger.of(context).removeCurrentSnackBar(); // Remove any existing snack bar.
+    ScaffoldMessenger.of(context)
+        .removeCurrentSnackBar(); // Remove any existing snack bar.
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -91,7 +93,7 @@ class _HarvestCardState extends State<HarvestCard> {
                   'description': descriptionController.text,
                   'price': double.parse(priceController.text),
                   'amount': double.parse(amountController.text),
-                  'imageURL':imageController.text,
+                  'imageURL': imageController.text,
                 };
 
                 final firestore = FirebaseFirestore.instance;
@@ -108,12 +110,15 @@ class _HarvestCardState extends State<HarvestCard> {
                     currentItems[itemIndex] = updatedItem;
 
                     userDocRef.update({'items': currentItems}).then((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Item updated successfully.'),
-                          duration: Duration(
-                              seconds: 2), // Adjust the duration as needed.
-                        ),
+                      showCustomAlertDialog(
+                        context: context,
+                        title: 'සාර්ථකයි',
+                        message: 'අයිතමය සාර්ථකව යාවත්කාලීන කරන ලදී',
+                        buttonText: 'හරි',
+                        onButtonPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        isSuccess: true,
                       );
                       setState(() {
                         filteredItems[itemIndex] = updatedItem;
@@ -121,11 +126,15 @@ class _HarvestCardState extends State<HarvestCard> {
                       Navigator.of(context).pop(); // Close the dialog
                     }).catchError((error) {
                       print('Error updating item: $error');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Failed to update item.'),
-                          duration: Duration(seconds: 2),
-                        ),
+                      showCustomAlertDialog(
+                        context: context,
+                        title: 'අසාර්ථකයි',
+                        message: 'සියලුම ක්ෂේත්‍ර පිරවිය යුතුයි.',
+                        buttonText: 'අවලංගු කරන්න',
+                        isSuccess: false,
+                        onButtonPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
                       );
                     });
                   } else {
@@ -143,6 +152,28 @@ class _HarvestCardState extends State<HarvestCard> {
               child: Text('අවලංගු කරන්න'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Future<void> showCustomAlertDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    required String buttonText,
+    required VoidCallback onButtonPressed,
+    required bool isSuccess,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: title,
+          message: message,
+          buttonText: buttonText,
+          onButtonPressed: onButtonPressed,
+          isSuccess: isSuccess,
         );
       },
     );
@@ -228,7 +259,7 @@ class _HarvestCardState extends State<HarvestCard> {
                           ),
                         ),
                         Text(
-                          '$price/=',
+                          'රු.${price.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,

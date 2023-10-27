@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/Pages/Buyer/item_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mobile/Services/FarmerServices/alert_services.dart';
 
 class ItemCard extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -14,6 +15,29 @@ class ItemCard extends StatefulWidget {
 class _ItemCardState extends State<ItemCard> {
   // Initialize an empty list to store items from Firestore
   List<Item> items = [];
+  
+    Future<void> showCustomAlertDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    required String buttonText,
+    required VoidCallback onButtonPressed,
+    required bool isSuccess,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: title,
+          message: message,
+          buttonText: buttonText,
+          onButtonPressed: onButtonPressed,
+          isSuccess: isSuccess,
+        );
+      },
+    );
+  }
+
 
   // Function to fetch items from Firestore
   Future<void> fetchItemsFromFirestore() async {
@@ -97,8 +121,17 @@ class _ItemCardState extends State<ItemCard> {
           'favorite_items': [favoriteData],
         });
       }
-
-      // You can also show a confirmation message to the user.
+      await showCustomAlertDialog(
+              context: context,
+              title: 'සාර්ථකයි',
+              message: 'අයිතමය සාර්ථකව කරත්තයට එකතු කරන ලදී',
+              buttonText: 'හරි',
+              onButtonPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              isSuccess: true,
+            );
+      
     } catch (e) {
       print("Error adding item to favorites: $e");
     }
@@ -174,7 +207,7 @@ class _ItemCardState extends State<ItemCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Rs.${item.price.toStringAsFixed(2)}', // Use the quantity from the item
+                        'රු.${item.price.toStringAsFixed(2)}', // Use the quantity from the item
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 15,
