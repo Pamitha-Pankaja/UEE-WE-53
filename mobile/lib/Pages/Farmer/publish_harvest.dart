@@ -78,15 +78,6 @@ class _PublishHarvestState extends State<PublishHarvest> {
                   String description = descController.text;
 
                   _uploadData(cropType, amount, price, description);
-
-                  // Process the data or make API calls as needed
-                  print('Crop Type: $cropType');
-                  print('Agriculture Property: $description');
-                  print('Water Source: $price');
-                  print('Area: $amount');
-                  if (_image != null) {
-                    print('Image path: ${_image!.path}');
-                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xaf018241),
@@ -226,16 +217,30 @@ class _PublishHarvestState extends State<PublishHarvest> {
   }
 
   Future<void> _uploadData(
-    String cropType,
-    double amount,
-    double price,
-    String description,
+  String cropType,
+  double amount,
+  double price,
+  String description,
   ) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      // Handle the case where the user is not logged in
-      return;
-    }
+  final user = _auth.currentUser;
+  if (user == null) {
+    // Handle the case where the user is not logged in
+    return;
+  }
+
+  if (cropType.isEmpty || amount <= 0 || price <= 0 || description.isEmpty || _image == null) {
+    await showCustomAlertDialog(
+      context: context,
+      title: 'අසාර්ථකයි',
+      message: 'සියලුම ක්ෂේත්‍ර පිරවිය යුතුයි.',
+      buttonText: 'අවලංගු කරන්න',
+      isSuccess: false,
+      onButtonPressed: () {
+        Navigator.of(context).pop(); // Close the dialog
+      },
+    );
+    return;
+  }
 
     try {
       if (_image != null) {
@@ -279,9 +284,6 @@ class _PublishHarvestState extends State<PublishHarvest> {
           },
           isSuccess: true,
         );
-
-        // _showAlertDialog( Icons.check,'සාර්ථකයි', 'අස්වැන්න සාර්ථකව පළ කරන ලදී.',true);
-        // Print some feedback
         print('Data saved to Firestore.');
       } else {
         print('Please select an image.');
