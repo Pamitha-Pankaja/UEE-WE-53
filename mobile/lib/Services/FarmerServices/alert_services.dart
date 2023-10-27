@@ -82,11 +82,11 @@ class CustomAlertDialog extends StatelessWidget {
             ),
             Positioned(
                 left: 92,
-                top: 0,
+                top: 12,
                 child: isSuccess
                     ? Container()
                     : Image.asset(
-                        'assets/Ok.png',
+                        'assets/Error.png',
                         width: 100,
                         height: 90,
                         fit: BoxFit.contain,
@@ -104,30 +104,32 @@ class CustomAlertDialog extends StatelessWidget {
                   : Container(), // You can remove the Container if not needed
             ),
             Positioned(
-              left: 92,
-              top: 230,
-              child: ElevatedButton(
-                onPressed: onButtonPressed,
-                style: ElevatedButton.styleFrom(
-                  primary: isSuccess
-                      ?  Color(0xAF018241)
-                      : Color.fromARGB(172, 251, 9, 9),
-                  minimumSize: Size(95, 40),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 40.0),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                  onPressed: onButtonPressed,
+                  style: ElevatedButton.styleFrom(
+                    primary: isSuccess ? Color(0xAF018241) : Color.fromARGB(172, 251, 9, 9),
+                    minimumSize: Size(95, 40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
-                ),
-                child: Text(
-                  buttonText,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
+                  child: Text(
+                    buttonText,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
             ),
+          ),
           ],
         ),
       ),
