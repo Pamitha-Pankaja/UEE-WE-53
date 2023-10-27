@@ -324,6 +324,81 @@ class _ShowIrrigationstatState extends State<ShowIrrigationstat> {
               ),
             ),
           ),
+          Card(
+            margin: EdgeInsets.all(20),
+            child: Container(
+              width: 400 * fem,
+              height: 122 * fem,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20 * fem),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x23000000),
+                    offset: Offset(0 * fem, 4 * fem),
+                    blurRadius: 4 * fem,
+                  ),
+                ],
+              ),
+              child: Container(
+                padding: EdgeInsets.all(20),
+                width: 375.63 * fem,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color(0xfff5f5f5),
+                  borderRadius: BorderRadius.circular(20 * fem),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x3f000000),
+                      offset: Offset(0 * fem, 4 * fem),
+                      blurRadius: 10 * fem,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start, // Align text to the left
+                        children: [
+                          Text(
+                            'වාරිමාර්ග කලාපය',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 21,
+                              fontFamily: 'Iskoola Pota',
+                              fontWeight: FontWeight.w400,
+                              height: 1.2,
+                            ),
+                          ),
+                          Text(
+                            widget.selectedsubirrigationarea ?? "null",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 26,
+                              fontFamily: 'Iskoola Pota',
+                              fontWeight: FontWeight.w400,
+                              height: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 20 * fem, right: 20 * fem),
+                      child: Image.asset(
+                        'assets/lake.png', // Replace 'your_image.png' with the path to your PNG image
+                        width: 86.37 * fem,
+                        height: 80 * fem,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           ElevatedButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
