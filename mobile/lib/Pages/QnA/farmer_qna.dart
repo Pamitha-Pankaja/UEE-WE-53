@@ -445,17 +445,37 @@ class _QnAState extends State<QnAPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          final firestore = FirebaseFirestore.instance;
-                          await firestore
-                              .collection('questions_and_answers')
-                              .doc(question['docID'])
-                              .update({
-                            'question': questionController.text,
-                            'questionDescription': descriptionController.text,
-                          });
+                          try {
+                            final firestore = FirebaseFirestore.instance;
+                            await firestore
+                                .collection('questions_and_answers')
+                                .doc(question['docID'])
+                                .update({
+                              'questionTopic': questionController.text,
+                              'questionDescription': descriptionController.text,
+                            });
 
-                          Navigator.pop(context);
-                          await fetchQuestions();
+                            Navigator.pop(context);
+
+                            // Show a success toast message
+                            Fluttertoast.showToast(
+                              msg: 'සාර්ථකව යාවත්කාලීන කරන ලදී',
+                              gravity: ToastGravity.CENTER,
+                              backgroundColor: Colors.green,
+                            );
+                            
+                            await fetchQuestions();
+                          } catch (e) {
+                            // Handle errors here, such as displaying an error message.
+                            print("Error updating document: $e");
+
+                            // Show an error toast message
+                            Fluttertoast.showToast(
+                              msg: 'යාවත්කාලීන කිරීමේදී දෝෂයකි: $e',
+                              gravity: ToastGravity.CENTER,
+                              backgroundColor: Colors.red,
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.green, // Background color
