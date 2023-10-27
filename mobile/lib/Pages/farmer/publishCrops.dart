@@ -111,7 +111,7 @@ class _PublishCropsState extends State<PublishCrops> {
     return Scaffold(
       appBar: AppBar(
         title: Text("බෝග ඇතුලත් කිරීම"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: const Color.fromARGB(255, 1, 130, 65),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),

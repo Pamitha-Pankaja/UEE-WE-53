@@ -65,7 +65,7 @@ class _FarmerHomeState extends State<FarmerHome> {
                       child: ListView(
                         children: <Widget>[
                           TextWithDivider('බෝග සංඛ්‍යාලේකන', () {
-                            Navigator.push(context,MaterialPageRoute(builder: (context) => CropStats(),),);
+                            Navigator.push(context,MaterialPageRoute(builder: (context) => CropStaristic(),),);
                           }),
                           TextWithDivider('බෝග පළ කරන්න', () {
                             Navigator.push(context,MaterialPageRoute(builder: (context) => PublishCrops(userData: widget.userData,),),);
