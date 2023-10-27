@@ -35,6 +35,15 @@ class _AdminCropStaristicState extends State<AdminCropStaristic> {
     "වී",
     "වට්ටක්කා",
     "මිරිස්",
+    "කජු",
+    "තක්කාලි",
+    "කැරට්",
+    "බෝංචි",
+    "මාලු මිරිස්",
+    "බණ්ඩක්කා",
+    "කෙසෙල්",
+    "වම්බොටු",
+    "පැණිකොමඩු",
   ];
 
   @override
@@ -42,7 +51,7 @@ class _AdminCropStaristicState extends State<AdminCropStaristic> {
     return Scaffold(
       appBar: AppBar(
         title: Text("බෝග සංඛ්‍යා ලේකන"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
       body: Column(
         children: [

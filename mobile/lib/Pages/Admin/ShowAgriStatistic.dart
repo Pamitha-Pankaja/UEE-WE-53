@@ -164,7 +164,7 @@ class _ShowAgriStatisticState extends State<ShowAgriStatistic> {
     return Scaffold(
       appBar: AppBar(
         title: Text("කෘෂිකාර්මික සංඛ්‍යාලේඛන"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
       body: Column(
         children: [

@@ -82,7 +82,7 @@ class _MyPropertyState extends State<MyProperty> {
     return Scaffold(
       appBar: AppBar(
         title: Text("මගේ දේපල"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
       body: Column(
         children: <Widget>[
@@ -165,7 +165,17 @@ class _MyPropertyState extends State<MyProperty> {
                       });
                     },
                     onDelete: () {
-                      deletePropertyCallback(property['documentId']);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DataDeleteDialog(
+                            onConfirmDelete: () {
+                              deletePropertyCallback(property['documentId']);
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                          );
+                        },
+                      );
                     },
                   );
                 },
@@ -311,7 +321,7 @@ class PropertyContainer extends StatelessWidget {
                           ),
                         );
                       },
-                      child: Text('Update'),
+                      child: Text('යාවත්කාලීන'),
                       style: ElevatedButton.styleFrom(
                         primary: Color(0xffaee49b),
                         shape: RoundedRectangleBorder(
@@ -321,9 +331,7 @@ class PropertyContainer extends StatelessWidget {
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: () {
-                        onDelete();
-                      },
+                      onPressed: onDelete,
                       child: Text('Delete'),
                       style: ElevatedButton.styleFrom(
                         primary: Color(0xfffb758d),
@@ -341,3 +349,172 @@ class PropertyContainer extends StatelessWidget {
     );
   }
 }
+
+class DataDeleteDialog extends StatelessWidget {
+  final VoidCallback onConfirmDelete;
+
+  DataDeleteDialog({required this.onConfirmDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 280,
+        height: 320,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Container(
+                width: 280,
+                height: 275,
+                decoration: ShapeDecoration(
+                  color: Color(0xFFF5F5F5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x3F000000),
+                      blurRadius: 15,
+                      offset: Offset(0, 4),
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 92,
+              top: 0,
+              child: Container(
+                width: 100,
+                height: 90,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/Error.png'),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 18,
+              top: 95, // Adjusted the top position
+              child: SizedBox(
+                width: 243,
+                height: 130,
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '\n ',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'අවවාදයයි\n',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 24,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '\n',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'ඔබට තොරතුරු මකා දැමීමට අවශ්‍යද..?\n',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '\n',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: 60,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: onConfirmDelete,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
+                      minimumSize: Size(95, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Text(
+                      'ඔව්',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xAF018241),
+                      minimumSize: Size(95, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Text(
+                      'නැත',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+

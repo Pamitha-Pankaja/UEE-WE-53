@@ -154,7 +154,7 @@ class _AddPropertyState extends State<AddProperty> {
     return Scaffold(
       appBar: AppBar(
         title: Text("දේපල ඇතුළත් කරන්න"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: Color.fromARGB(255, 1, 130,65),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -245,6 +245,7 @@ class _AddPropertyState extends State<AddProperty> {
             ),
             SizedBox(height: 16),
             buildInputField(areaController, 'භූමි ප්‍රමාණය(අක්කර)'),
+            
             SizedBox(height: 16),
             buildInputField(commentController, 'සටහන්'),
             SizedBox(height: 16),
