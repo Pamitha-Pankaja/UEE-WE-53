@@ -16,7 +16,7 @@ class _BuyerCartState extends State<BuyerCart> {
         title: Text("මගේ කරත්තය"),
         backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
-      body: FavouriteCard(userData: widget.userData),
+      body: FavouriteCard(userData: widget.userData,),
     );
   }
 }

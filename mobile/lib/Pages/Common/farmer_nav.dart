@@ -55,7 +55,7 @@ class _FarmerNavBarState extends State<FarmerNavBar> with TickerProviderStateMix
           null,
         ],
         tabSize: 65,
-        tabBarHeight: 70,
+        tabBarHeight: 75,
         textStyle: const TextStyle(
           fontSize: 12,
           color: Color.fromARGB(255, 255, 255, 255),

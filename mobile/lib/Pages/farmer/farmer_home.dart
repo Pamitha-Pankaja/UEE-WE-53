@@ -33,6 +33,8 @@ class _FarmerHomeState extends State<FarmerHome> {
 
   @override
   Widget build(BuildContext context) {
+    var profileImageURL = userProfile['profileImageURL'] ?? '';
+    var farmerName = userProfile['farmerName'] ?? '';
     return Scaffold(
       body: Stack(
         children: [
@@ -52,7 +54,7 @@ class _FarmerHomeState extends State<FarmerHome> {
                 alignment: Alignment.topLeft,
                 child: SizedBox(
                   width: 278,
-                  height: 520,
+                  height: 543.5,
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -63,7 +65,7 @@ class _FarmerHomeState extends State<FarmerHome> {
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 60),
+                      padding: const EdgeInsets.only(top: 120),
                       child: ListView(
                         children: <Widget>[
                           TextWithDivider('බෝග සංඛ්‍යාලේකන', () {
@@ -124,7 +126,7 @@ class _FarmerHomeState extends State<FarmerHome> {
             left: 50,
             child: Center(
               child: Container(
-                padding: EdgeInsets.fromLTRB(51, 85, 7, 10),
+              // padding: EdgeInsets.fromLTRB(51, 85, 7, 10),
                 width: 297,
                 height: 126,
                 decoration: BoxDecoration(
@@ -138,8 +140,13 @@ class _FarmerHomeState extends State<FarmerHome> {
                     ),
                   ],
                 ),
-                child: Text(
-                  'ආයුබෝවන් ${userProfile['farmerName']}!',
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top:58.0),
+                    child: Text(
+                      'ආයුබෝවන් $farmerName!',
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -155,14 +162,27 @@ class _FarmerHomeState extends State<FarmerHome> {
                 shape: BoxShape.circle,
               ),
               child: ClipOval(
-                child: Image.network(
-                  userProfile['profileImageURL'] ?? '',
-                  width: 150,
-                  height: 150,
-                  scale: 1.0,
-                  fit: BoxFit.cover,
-                ),
-              ),
+                    child: profileImageURL.isNotEmpty
+                        ? Image.network(
+                            profileImageURL,
+                            width: 150,
+                            height: 150,
+                            scale: 1.0,
+                            fit: BoxFit.cover,
+                          )
+                        : Center(
+                            child: Text(
+                              farmerName.isNotEmpty
+                                  ? farmerName[0]
+                                  : '',
+                              style: TextStyle(
+                                fontSize: 38.0,
+                                color: Color.fromARGB(255, 14, 151, 82),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                  ),
             ),
           ),
         ],
