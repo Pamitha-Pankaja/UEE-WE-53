@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/Pages/QnA/officer_qna.dart';
 import 'AdminCropStaristic.dart';
 import 'SelectIrrigationstat.dart';
 
@@ -65,6 +66,14 @@ class _AdminHomeState extends State<AdminHome> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => SelectIrrigationstat(),
+                              ),
+                            );
+                          }),
+                          TextWithDivider('ප්‍රශ්න සහ පිළිතුරු', () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AnswerPage(),
                               ),
                             );
                           }),

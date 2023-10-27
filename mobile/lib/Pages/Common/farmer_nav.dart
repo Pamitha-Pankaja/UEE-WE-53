@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/Pages/QnA/farmer_qna.dart';
 import 'package:mobile/Pages/farmer/farmer_home.dart';
 import 'package:mobile/Pages/farmer/farmer_profile.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
@@ -79,7 +80,7 @@ class _FarmerNavBarState extends State<FarmerNavBar> with TickerProviderStateMix
         children: <Widget>[
           FarmerProfile(userData: userData), // Profile Page
           FarmerHome(userData: userData), // Home Page
-          FarmerHome(userData: userData), // Home Page
+          QnAPage(),//QnA Page
         ],
       ),
     );
