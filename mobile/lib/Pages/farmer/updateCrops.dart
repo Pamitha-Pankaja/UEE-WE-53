@@ -520,7 +520,7 @@ class _UpdateCropsState extends State<UpdateCrops> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Update Crops"),
+        title: Text("බෝග යාවත්කාලීන කිරීම"),
         backgroundColor: const Color.fromARGB(255, 1, 130, 65),
       ),
       body: SingleChildScrollView(
@@ -529,15 +529,15 @@ class _UpdateCropsState extends State<UpdateCrops> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 50),
-            buildDropdownField(selectedCropType, cropTypes, 'Crop Type'),
+            buildDropdownField(selectedCropType, cropTypes, 'බෝග වර්ගය'),
             SizedBox(height: 16),
-            buildDropdownField(selectedAgriculturalProperty, agriculturalProperties, 'Agriculture Property'),
+            buildDropdownField(selectedAgriculturalProperty, agriculturalProperties, 'කෘෂිකාර්මික දේපල තෝරන්න'),
             SizedBox(height: 16),
-            buildDropdownField(selectedWaterSource, waterSources, 'Water Source'),
+            buildDropdownField(selectedWaterSource, waterSources, 'ජල මූලාශ්‍රය'),
             SizedBox(height: 16),
-            buildInputField(areaController, 'Area'),
+            buildInputField(areaController, 'භූමි ප්‍රමාණය'),
             SizedBox(height: 16),
-            buildInputField(expectedHarvestController, 'Expected Harvest'),
+            buildInputField(expectedHarvestController, 'අපේක්ෂිත අස්වැන්න'),
             SizedBox(height: 16),
             Center(
               child: ElevatedButton(
@@ -571,11 +571,11 @@ class _UpdateCropsState extends State<UpdateCrops> {
                     try {
                       // Update the document in Firestore
                       await docRef.update(updatedData);
-
+                        _showSuccessDialog();
                       // Show a success message or navigate to another screen
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Crop updated successfully!')),
-                      );
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   SnackBar(content: Text('Crop updated successfully!')),
+                      // );
                     } catch (e) {
                       // Handle any errors that occur during the update
                       print('Error updating crop: $e');
@@ -590,7 +590,7 @@ class _UpdateCropsState extends State<UpdateCrops> {
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
-                    const Color.fromARGB(255, 42, 175, 46),
+                    const Color.fromARGB(255, 1, 130, 65),
                   ),
                   minimumSize: MaterialStateProperty.all<Size>(Size(170, 50)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -599,7 +599,7 @@ class _UpdateCropsState extends State<UpdateCrops> {
                     ),
                   ),
                 ),
-                child: Text('Update', style: TextStyle(fontSize: 15)),
+                child: Text('යාවත්කාලීන', style: TextStyle(fontSize: 15)),
               ),
             ),
           ],
@@ -607,6 +607,37 @@ class _UpdateCropsState extends State<UpdateCrops> {
       ),
     );
   }
+
+
+   Future<void> _showSuccessDialog() async {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Row(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: Colors.green,
+              size: 32,
+            ),
+            SizedBox(width: 8),
+            Text('සාර්ථකයි'),
+          ],
+        ),
+        content: Text('ඔබ භෝග විස්තර සාර්ථකව යාවත්කාලීන කරන ලදී!'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   Widget buildDropdownField(String? selectedValue, List<String> items, String labelText) {
     return Padding(
