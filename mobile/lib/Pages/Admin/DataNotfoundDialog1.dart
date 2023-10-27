@@ -59,7 +59,7 @@ class DataNotFoundDialog1 extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: 'WARNING\n',
+                                text: 'දෝෂයකි\n',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 24,

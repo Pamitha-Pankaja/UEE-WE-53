@@ -81,7 +81,7 @@ class _MyPropertyState extends State<MyProperty> {
     print('Login Email: $loginEmail');
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Properties"),
+        title: Text("මගේ දේපල"),
         backgroundColor: const Color.fromARGB(255, 42, 175, 46),
       ),
       body: Column(
@@ -138,7 +138,7 @@ class _MyPropertyState extends State<MyProperty> {
                           ),
                         ),
                         child: Text(
-                          'Add Property',
+                          'නව දේපල',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 26 * fem,
