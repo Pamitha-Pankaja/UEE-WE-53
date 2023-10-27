@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'FillAllFieldDialog.dart';
+import 'package:provider/provider.dart';
+import 'package:mobile/Pages/Common/login_page.dart';
+import 'DataInsertSuccessfullyDialog.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -27,6 +31,33 @@ class _AddPropertyState extends State<AddProperty> {
   String? selectedwatercomingmethod;
   String? selectedmainirrigationarea;
   String? selectedsubirrigationarea;
+
+  String loginEmail = '';
+
+  bool areFieldsEmpty() {
+    if (selectedprovince == null ||
+        selecteddistrict == null ||
+        selectedsecreterydivision == null ||
+        selectedagriculturedivision == null ||
+        selectedwatercomingmethod == null ||
+        selectedmainirrigationarea == null ||
+        selectedsubirrigationarea == null ||
+        areaController.text.isEmpty ||
+        commentController.text.isEmpty ||
+        propertynameController.text.isEmpty ||
+        ownernameController.text.isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Get the email from Provider
+    loginEmail = context.read<LoginEmailProvider>().email;
+  }
 
   List<String> province = [
     "උතුරු පළාත",
@@ -108,6 +139,15 @@ class _AddPropertyState extends State<AddProperty> {
     "කතරගම",
     "සියඹලාණ්ඩුව"
   ];
+
+  void showDataNotFoundDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return DataInsertSuccessfullyDialog();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,34 +252,44 @@ class _AddPropertyState extends State<AddProperty> {
               child: ElevatedButton(
                 onPressed: () async {
                   // Handle form submission
-                  Map<String, dynamic> propertyData = {
-                    'province': selectedprovince ?? '',
-                    'district': selecteddistrict ?? '',
-                    'secreterydivision': selectedsecreterydivision ?? '',
-                    'area': areaController.text,
-                    'comment': commentController.text,
-                    'agriculturedivision': selectedagriculturedivision ?? '',
-                    'propertyname': propertynameController.text,
-                    'ownername': ownernameController.text,
-                    'watercomingmethod': selectedwatercomingmethod ?? '',
-                    'mainirrigationarea': selectedmainirrigationarea ?? '',
-                    'subirrigationarea': selectedsubirrigationarea ?? '',
-                    'email': 'rajapaksha@gmail.com',
-                  };
+                  if (areFieldsEmpty()) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return FillAllFieldDialog();
+                      },
+                    );
+                  } else {
+                    Map<String, dynamic> propertyData = {
+                      'province': selectedprovince ?? '',
+                      'district': selecteddistrict ?? '',
+                      'secreterydivision': selectedsecreterydivision ?? '',
+                      'area': areaController.text,
+                      'comment': commentController.text,
+                      'agriculturedivision': selectedagriculturedivision ?? '',
+                      'propertyname': propertynameController.text,
+                      'ownername': ownernameController.text,
+                      'watercomingmethod': selectedwatercomingmethod ?? '',
+                      'mainirrigationarea': selectedmainirrigationarea ?? '',
+                      'subirrigationarea': selectedsubirrigationarea ?? '',
+                      'email': loginEmail,
+                    };
 
-                  // Process the data or make API calls as needed
-                  try {
-                    // Reference to your Firestore collection
-                    CollectionReference properties =
-                        FirebaseFirestore.instance.collection('properties');
+                    // Process the data or make API calls as needed
+                    try {
+                      // Reference to your Firestore collection
+                      CollectionReference properties =
+                          FirebaseFirestore.instance.collection('properties');
 
-                    // Add a new document with a unique ID
-                    await properties.add(propertyData);
+                      // Add a new document with a unique ID
+                      await properties.add(propertyData);
 
-                    // Data has been saved to Firestore
-                    print('Data saved to Firestore');
-                  } catch (e) {
-                    print('Error saving data to Firestore: $e');
+                      // Data has been saved to Firestore
+                      print('Data saved to Firestore');
+                      showDataNotFoundDialog();
+                    } catch (e) {
+                      print('Error saving data to Firestore: $e');
+                    }
                   }
                 },
                 style: ButtonStyle(

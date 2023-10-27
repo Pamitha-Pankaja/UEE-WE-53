@@ -130,9 +130,17 @@ class _ShowAgriStatisticState extends State<ShowAgriStatistic> {
       totalFarmers = 0;
     }
 
+    if (cropType == 'Not Selected') {
+      totalHarvest = 0.0;
+    }
+
     setState(() {
       totalarea = totalArea.toStringAsFixed(2);
-      estimateharvest = totalHarvest.toStringAsFixed(2) + " KG";
+      if (cropType == 'Not Selected' || cropType == ' Not Selected') {
+        estimateharvest = 'Not Selected';
+      } else {
+        estimateharvest = totalHarvest.toStringAsFixed(2) + " KG";
+      }
       totalfarmers = totalFarmers.toString();
     });
   }

@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
+import 'ShowIrrigationstat.dart';
+import 'FillAllFieldDialog.dart';
 
+void main() {
+  runApp(MyApp());
+}
 
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: SelectIrrigationstat(),
+    );
+  }
+}
 
 class SelectIrrigationstat extends StatefulWidget {
   @override
@@ -14,20 +27,60 @@ class _SelectIrrigationstatState extends State<SelectIrrigationstat> {
   String? selectedmainirrigationarea;
   String? selectedsubirrigationarea;
 
+  bool areDropdownsEmpty() {
+    return selecteddistrict == null &&
+        selectedwatercomingmethod == null &&
+        selectedmainirrigationarea == null &&
+        selectedsubirrigationarea == null;
+  }
+
   List<String> distric = [
-    // Districts list...
+    "යාපනය",
+    "කිලිනොච්චි",
+    "මන්නාරම",
+    "මුලතිව්",
+    "වවුනියාව",
+    "පුත්තලම",
+    "කුරුණෑගල",
+    "ගම්පහ",
+    "කොළඹ",
+    "කළුතර",
+    "අනුරාධපුර",
+    "පොලොන්නරුව",
+    "මාතලේ",
+    "මහනුවර",
+    "නුවරඑලිය",
+    "කෑගල්ල",
+    "රත්නපුර",
+    "ත්‍රිකුණාමලය",
+    "මඩකලපුව",
+    "අම්පාර",
+    "බදුල්ල",
+    "මොණරාගල",
+    "හම්බන්තොට",
+    "මාතර",
+    "ගාල්ල"
   ];
 
   List<String> watermethods = [
-    // Water methods list...
+    "ඇළ මාර්ග",
+    "ගංගා",
+    "අහස්දිය",
+    "භූගත ජලය",
+    "වැව"
   ];
 
-  List<String> mainirrigationarea = [
-    // Main irrigation areas list...
-  ];
+  List<String> mainirrigationarea = ["බදුල්ල", "බිබිල", "බුත්තල"];
 
   List<String> subirrigationarea = [
-    // Sub irrigation areas list...
+    "මොණරාගල",
+    "බුත්තල",
+    "තණමල්විල",
+    "වැල්ලවාය",
+    "සෙවණගල",
+    "බඩල්කුඹුර",
+    "කතරගම",
+    "සියඹලාණ්ඩුව"
   ];
 
   @override
@@ -57,38 +110,52 @@ class _SelectIrrigationstatState extends State<SelectIrrigationstat> {
               child: Column(
                 children: [
                   // Dropdowns and related elements
-                  buildDropdownField(
-                      selecteddistrict, distric, 'දිස්ත්‍රික්කය'),
+                  buildDropdownField(selecteddistrict, distric, 'දිස්ත්‍රික්කය',
+                      (value) {
+                    selecteddistrict = value;
+                  }),
                   SizedBox(height: 16),
                   buildDropdownField(
-                      selectedwatercomingmethod, watermethods, 'ජල මූලාශ්‍රය'),
+                      selectedwatercomingmethod, watermethods, 'ජල මූලාශ්‍රය',
+                      (value) {
+                    selectedwatercomingmethod = value;
+                  }),
                   SizedBox(height: 16),
                   buildDropdownField(selectedmainirrigationarea,
-                      mainirrigationarea, 'ප්‍රදාන වාරිමාර්ග කලාපය'),
+                      mainirrigationarea, 'ප්‍රදාන වාරිමාර්ග කලාපය', (value) {
+                    selectedmainirrigationarea = value;
+                  }),
                   SizedBox(height: 16),
                   buildDropdownField(selectedsubirrigationarea,
-                      subirrigationarea, 'උප වාරිමාර්ග කලාපය'),
+                      subirrigationarea, 'උප වාරිමාර්ග කලාපය', (value) {
+                    selectedsubirrigationarea = value;
+                  }),
                   SizedBox(height: 16),
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        // Handle form submission
-
-                        String district = selecteddistrict ?? '';
-
-                        String watercomingmethod =
-                            selectedwatercomingmethod ?? '';
-                        String mainirrigationarea =
-                            selectedmainirrigationarea ?? '';
-                        String subirrigationarea =
-                            selectedsubirrigationarea ?? '';
-
-                        // Process the data or make API calls as needed
-
-                        print('Agriculture Property: $district');
-                        print('Water Coming Method: $watercomingmethod');
-                        print('Main Irrigation Area: $mainirrigationarea');
-                        print('Sub Irrigation Area: $subirrigationarea');
+                        if (areDropdownsEmpty()) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return FillAllFieldDialog();
+                            },
+                          );
+                        } else {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ShowIrrigationstat(
+                                selecteddistrict: selecteddistrict,
+                                selectedwatercomingmethod:
+                                    selectedwatercomingmethod,
+                                selectedmainirrigationarea:
+                                    selectedmainirrigationarea,
+                                selectedsubirrigationarea:
+                                    selectedsubirrigationarea,
+                              ),
+                            ),
+                          );
+                        }
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -104,7 +171,7 @@ class _SelectIrrigationstatState extends State<SelectIrrigationstat> {
                         ),
                       ),
                       child: Text(
-                        'Show',
+                        'පෙන්වන්න',
                         style: TextStyle(fontSize: 15),
                       ),
                     ),
@@ -118,8 +185,8 @@ class _SelectIrrigationstatState extends State<SelectIrrigationstat> {
     );
   }
 
-  Widget buildDropdownField(
-      String? selectedValue, List<String> items, String labelText) {
+  Widget buildDropdownField(String? selectedValue, List<String> items,
+      String labelText, void Function(String?) onChanged) {
     return Padding(
       padding:
           const EdgeInsets.only(left: 10, bottom: 16.0), // Add 10 left margin
@@ -150,11 +217,7 @@ class _SelectIrrigationstatState extends State<SelectIrrigationstat> {
               ),
               child: DropdownButtonFormField<String>(
                 value: selectedValue,
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedValue = newValue;
-                  });
-                },
+                onChanged: onChanged,
                 items: items.map((item) {
                   return DropdownMenuItem(
                     value: item,

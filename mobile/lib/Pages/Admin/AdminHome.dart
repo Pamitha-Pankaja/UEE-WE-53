@@ -1,22 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/Pages/Farmer/cropStatistcs.dart';
-import 'package:mobile/Pages/Farmer/myCrops.dart';
-import 'package:mobile/Pages/Farmer/publishCrops.dart';
-import 'package:mobile/Pages/farmer/my_harvest.dart';
-import 'package:mobile/Pages/farmer/publish_harvest.dart';
-import 'package:mobile/Services/FarmerServices/farmer_profile_services.dart';
-import 'package:mobile/Pages/Admin/ShowMyproperty.dart';
-import 'package:mobile/Pages/Admin/AddProperty.dart';
+import 'AdminCropStaristic.dart';
+import 'SelectIrrigationstat.dart';
 
-class FarmerHome extends StatefulWidget {
-  final Map<String, dynamic> userData;
-  const FarmerHome({Key? key, required this.userData}) : super(key: key);
-
+class AdminHome extends StatefulWidget {
   @override
-  State<FarmerHome> createState() => _FarmerHomeState();
+  State<AdminHome> createState() => _AdminHomeState();
 }
 
-class _FarmerHomeState extends State<FarmerHome> {
+class _AdminHomeState extends State<AdminHome> {
   Map<String, dynamic> userProfile =
       Map<String, dynamic>(); // Initialize userData
 
@@ -24,11 +15,6 @@ class _FarmerHomeState extends State<FarmerHome> {
   void initState() {
     super.initState();
     // Call the getUserProfile method to get user data
-    FarmerProfileService().getUserProfile().then((data) {
-      setState(() {
-        userProfile = data;
-      });
-    });
   }
 
   @override
@@ -52,7 +38,7 @@ class _FarmerHomeState extends State<FarmerHome> {
                 alignment: Alignment.topLeft,
                 child: SizedBox(
                   width: 278,
-                  height: 520,
+                  height: MediaQuery.of(context).size.height - 220,
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -63,51 +49,22 @@ class _FarmerHomeState extends State<FarmerHome> {
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 60),
+                      padding: const EdgeInsets.only(top: 100),
                       child: ListView(
                         children: <Widget>[
                           TextWithDivider('බෝග සංඛ්‍යාලේකන', () {
-                            Navigator.push(context,MaterialPageRoute(builder: (context) => CropStaristic(),),);
-                          }),
-                          TextWithDivider('බෝග පළ කරන්න', () {
-                            Navigator.push(context,MaterialPageRoute(builder: (context) => PublishCrops(userData: widget.userData,),),);
-                          }),
-                          TextWithDivider('මගේ බෝග', () {
-                            Navigator.push(context,MaterialPageRoute(builder: (context) => MyCrops(userData: widget.userData,),),);
-                          }),
-                          TextWithDivider('අස්වැන්න පළ කරන්න', () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PublishHarvest(
-                                  userData: widget.userData,
-                                ),
+                                builder: (context) => AdminCropStaristic(),
                               ),
                             );
                           }),
-                          TextWithDivider('මගේ අස්වැන්න', () {
+                          TextWithDivider('වාරිමාර්ග සංඛ්‍යාලේකන', () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MyHarvest(
-                                  userData: widget.userData,
-                                ),
-                              ),
-                            );
-                          }),
-                          TextWithDivider('නව දේපල', () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddProperty(),
-                              ),
-                            );
-                          }),
-                          TextWithDivider('මගේ දේපල', () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MyProperty(),
+                                builder: (context) => SelectIrrigationstat(),
                               ),
                             );
                           }),
@@ -138,8 +95,15 @@ class _FarmerHomeState extends State<FarmerHome> {
                     ),
                   ],
                 ),
-                child: Text(
-                  'ආයුබෝවන් ${userProfile['farmerName']}!',
+                child: Center(
+                  child: Text(
+                    'ආයුබෝවන්',
+                    style: TextStyle(
+                      color: Colors.black, // You can set the desired text color
+                      fontSize: 24, // Adjust the font size as needed
+                      fontWeight: FontWeight.bold, // Make the text bold
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -155,11 +119,10 @@ class _FarmerHomeState extends State<FarmerHome> {
                 shape: BoxShape.circle,
               ),
               child: ClipOval(
-                child: Image.network(
-                  userProfile['profileImageURL'] ?? '',
+                child: Image.asset(
+                  'assets/adminlogo.png',
                   width: 150,
                   height: 150,
-                  scale: 1.0,
                   fit: BoxFit.cover,
                 ),
               ),
