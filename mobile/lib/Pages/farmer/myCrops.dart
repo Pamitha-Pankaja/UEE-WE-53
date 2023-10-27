@@ -128,7 +128,7 @@ class _MyCropsState extends State<MyCrops> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Crops'),
+        title: Text('මගේ බෝග'),
         backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
       body: Column(
@@ -191,17 +191,17 @@ class _MyCropsState extends State<MyCrops> {
                                   size: 28,
                                 ),
                                 SizedBox(width: 8),
-                                Text("Delete Crop"),
+                                Text("බෝගය මැකීම"),
                               ],
                             ),
-                            content: Text("Do you want to delete this crop?"),
+                            content: Text("ඔබට මෙම බෝග ඉවත් කිරීමට අවශ්‍යද?"),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
                                 child: Text(
-                                  "No",
+                                  "නැත",
                                   style: TextStyle(
                                     color: Color.fromARGB(255, 44, 138, 7),
                                   ),
@@ -213,7 +213,7 @@ class _MyCropsState extends State<MyCrops> {
                                   deleteCrop(docId);
                                 },
                                 child: Text(
-                                  "Yes",
+                                  "ඔව්",
                                   style: TextStyle(
                                     color: Colors.red,
                                   ),

@@ -444,7 +444,7 @@ class _AdminCropStaristicState extends State<CropStaristic> {
                           ),
                         ),
                       ),
-                      child: Text('Show'),
+                      child: Text('පෙන්වන්න'),
                     ),
                   ),
                 ],
@@ -654,8 +654,9 @@ Future<void> fetchDataFromFirestore() async {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                buildDetailsBox("Total Lands:", totalArea),
-                buildDetailsBox("Total Harvest:", totalHarvest),
+                buildDetailsBox("වගාකර ඇති සම්පූර්ණ භූමි ප්‍රමාණය : \n", totalArea),
+                buildDetailsBox("\n",("")),
+                buildDetailsBox("අපේක්ෂිත සම්පූර්ණ අස්වැන්න : \n", totalHarvest),
                 SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
