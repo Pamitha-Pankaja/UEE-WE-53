@@ -30,7 +30,8 @@ class _FavouriteCardState extends State<FavouriteCard> {
 
       if (snapshot.exists) {
         final documentData = snapshot.data() as Map<String, dynamic>;
-        final favoriteItemsData = documentData['favorite_items'] as List<dynamic>;
+        final favoriteItemsData =
+            documentData['favorite_items'] as List<dynamic>;
         favoriteItems = List<Map<String, dynamic>>.from(favoriteItemsData);
       }
     } catch (e) {
@@ -39,6 +40,30 @@ class _FavouriteCardState extends State<FavouriteCard> {
 
     setState(() {});
   }
+
+  void deleteItem(BuildContext context, int index) {
+  final itemData = favoriteItems[index];
+  final userId = widget.userData['uid'];
+
+  // Delete the item from Firestore
+  FirebaseFirestore.instance
+      .collection('favorites')
+      .doc(userId)
+      .update({
+        'favorite_items': FieldValue.arrayRemove([itemData])
+      })
+      .then((_) {
+    // Item deleted successfully, now remove it from the local list
+    setState(() {
+      favoriteItems.removeAt(index);
+    });
+  })
+      .catchError((error) {
+    print("Error deleting item: $error");
+    // Handle the error as needed
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +147,8 @@ class _FavouriteCardState extends State<FavouriteCard> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ItemDetailsPage(item: Item(
+                                  builder: (context) => ItemDetailsPage(
+                                      item: Item(
                                     type,
                                     imageUrl,
                                     amount,
@@ -154,7 +180,7 @@ class _FavouriteCardState extends State<FavouriteCard> {
                             icon: Icon(Icons.delete,
                                 size: 27, color: Color(0xFFAF0F03)),
                             onPressed: () {
-                              // Implement delete logic here
+                              deleteItem(context, index);
                             },
                           ),
                         ],
@@ -170,6 +196,7 @@ class _FavouriteCardState extends State<FavouriteCard> {
     );
   }
 }
+
 class Item {
   final String type;
   final String imageUrl;
