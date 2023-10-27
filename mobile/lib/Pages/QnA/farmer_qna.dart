@@ -12,8 +12,11 @@ class QnAPage extends StatefulWidget {
   State<QnAPage> createState() => _QnAState();
 }
 
+enum QuestionFilter { All, Answered, NotAnswered }
+
 const authorId = "11001100";
 bool _isLoading = false;
+bool filterByAnswered = false; // Initially, show all questions
 
 class _QnAState extends State<QnAPage> {
   List<Map<String, String>> allQuestions = [];
@@ -23,6 +26,7 @@ class _QnAState extends State<QnAPage> {
   PageController _pageController = PageController(initialPage: 0);
   int selectedTabIndex = 0;
   final List<String> tabLabels = ["All Questions", "My Questions"];
+  QuestionFilter selectedFilter = QuestionFilter.All;
 
   @override
   void initState() {
@@ -63,7 +67,7 @@ class _QnAState extends State<QnAPage> {
 
       // Show a toast message
       Fluttertoast.showToast(
-        msg: 'Data fetched successfully',
+        msg: 'දත්ත සාර්ථකව ලබා ගන්නා ලදී',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER, // Show at the top
         backgroundColor: Colors.green, // Background color
@@ -74,7 +78,7 @@ class _QnAState extends State<QnAPage> {
       print("Error fetching questions: $e");
       Fluttertoast.showToast(
         msg:
-            "Error fetching questions. Please check your internet connection.  $e",
+            "ප්‍රශ්න ලබා ගැනීමේ දෝෂයකි. කරුණාකර ඔබගේ අන්තර්ජාල සම්බන්ධතාවය පරීක්ෂා කරන්න.  $e",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
       );
@@ -89,7 +93,7 @@ class _QnAState extends State<QnAPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("ප්‍රශ්න සහ පිළිතුරු"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
       body: Column(
         children: [
@@ -121,13 +125,11 @@ class _QnAState extends State<QnAPage> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(
-                    Icons.filter_list,
-                    color: Colors.black, // Change icon color to black
-                    size: 30.0, // Increase icon size slightly
-                  ),
+                  icon: const Icon(Icons.filter_list,
+                      color: Colors.black, size: 30.0),
                   onPressed: () {
-                    // Handle filter button press here
+                    // Call the filter dialog function
+                    _showFilterDialog(context);
                   },
                 ),
                 IconButton(
@@ -219,30 +221,51 @@ class _QnAState extends State<QnAPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AddQuestion(); // Use the imported CustomDialog widget
-            },
-          );
-        },
-        backgroundColor: Colors.green,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-          size: 30.0,
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 30.0), // Adjust the margin as needed
+        child: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AddQuestion(); // Use the imported CustomDialog widget
+              },
+            );
+          },
+          backgroundColor: Colors.green,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 30.0,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildQuestionsList(List<Map<String, String>> questions) {
+    List<Map<String, String>> filteredQuestions = [];
+
+    switch (selectedFilter) {
+      case QuestionFilter.All:
+        filteredQuestions = questions;
+        break;
+      case QuestionFilter.Answered:
+        filteredQuestions = questions
+            .where((question) => (question['answer'] ?? '').isNotEmpty)
+            .toList();
+        break;
+      case QuestionFilter.NotAnswered:
+        filteredQuestions = questions
+            .where((question) => (question['answer'] ?? '').isEmpty)
+            .toList();
+        break;
+    }
+
     return ListView.builder(
-      itemCount: questions.length,
+      itemCount: filteredQuestions.length,
       itemBuilder: (context, index) {
-        final question = questions[index];
+        final question = filteredQuestions[index];
         final hasAnswer =
             question['answer'] == null || question['answer']!.isEmpty;
 
@@ -498,6 +521,62 @@ class _QnAState extends State<QnAPage> {
               child: const Text('මකන්න'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  // Function to show the filter dialog
+  void _showFilterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('ප්‍රශ්න පෙරහන් කරන්න'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('සියලු ප්‍රශ්න'),
+                leading: Radio(
+                  value: QuestionFilter.All,
+                  groupValue: selectedFilter,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              ListTile(
+                title: const Text('පිළිතුරු දුන් ප්‍රශ්න'),
+                leading: Radio(
+                  value: QuestionFilter.Answered,
+                  groupValue: selectedFilter,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              ListTile(
+                title: const Text('පිළිතුරු නැති ප්‍රශ්න'),
+                leading: Radio(
+                  value: QuestionFilter.NotAnswered,
+                  groupValue: selectedFilter,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

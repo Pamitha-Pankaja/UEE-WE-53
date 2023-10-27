@@ -14,7 +14,10 @@ class AnswerPage extends StatefulWidget {
   State<AnswerPage> createState() => _QnAState();
 }
 
+enum QuestionFilter { All, Answered, NotAnswered }
+
 bool _isLoading = false;
+bool filterByAnswered = false; // Initially, show all questions
 
 class _QnAState extends State<AnswerPage> {
   List<Map<String, String>> allQuestions = [];
@@ -26,6 +29,7 @@ class _QnAState extends State<AnswerPage> {
   TextEditingController _answerController = TextEditingController();
   Map<String, bool> isEditingMap =
       {}; // Map to track edit mode for each question
+  QuestionFilter selectedFilter = QuestionFilter.All;
 
   @override
   void initState() {
@@ -62,7 +66,7 @@ class _QnAState extends State<AnswerPage> {
 
       // Show a toast message
       Fluttertoast.showToast(
-        msg: 'Data fetched successfully',
+        msg: 'දත්ත සාර්ථකව ලබා ගන්නා ලදී',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER, // Show at the top
         backgroundColor: Colors.green, // Background color
@@ -73,7 +77,7 @@ class _QnAState extends State<AnswerPage> {
       print("Error fetching questions: $e");
       Fluttertoast.showToast(
         msg:
-            "Error fetching questions. Please check your internet connection.  $e",
+            "ප්‍රශ්න ලබා ගැනීමේ දෝෂයකි. කරුණාකර ඔබගේ අන්තර්ජාල සම්බන්ධතාවය පරීක්ෂා කරන්න.  $e",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
       );
@@ -94,7 +98,7 @@ class _QnAState extends State<AnswerPage> {
 
       // Show a toast message
       Fluttertoast.showToast(
-        msg: 'Answer updated successfully',
+        msg: 'පිළිතුර සාර්ථකව යාවත්කාලීන කරන ලදී',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         backgroundColor: Colors.green,
@@ -107,7 +111,7 @@ class _QnAState extends State<AnswerPage> {
       // Handle any errors
       print("Error updating answer: $e");
       Fluttertoast.showToast(
-        msg: "Error updating answer. $e",
+        msg: "පිළිතුර යාවත්කාලීන කිරීමේ දෝෂයකි. $e",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
       );
@@ -123,17 +127,19 @@ class _QnAState extends State<AnswerPage> {
 
       // Show a toast message
       Fluttertoast.showToast(
-        msg: 'Question deleted successfully',
+        msg: 'ප්‍රශ්නය සාර්ථකව මකා ඇත',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
+
+      fetchQuestions();
     } catch (e) {
       // Handle any errors
       print("Error deleting question: $e");
       Fluttertoast.showToast(
-        msg: "Error deleting question. $e",
+        msg: "ප්‍රශ්නය මැකීමේ දෝෂයකි. $e",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
       );
@@ -145,7 +151,7 @@ class _QnAState extends State<AnswerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Q&A"),
-        backgroundColor: const Color.fromARGB(255, 42, 175, 46),
+        backgroundColor: Color.fromARGB(255, 1, 130, 65),
       ),
       body: Column(
         children: [
@@ -230,7 +236,7 @@ class _QnAState extends State<AnswerPage> {
                     ),
                   ),
                 ),
-                child: const Text("All Questions"),
+                child: const Text("සියලු ප්‍රශ්න"),
               ),
             ],
           ),
@@ -244,30 +250,51 @@ class _QnAState extends State<AnswerPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AddQuestion(); // Use the imported CustomDialog widget
-            },
-          );
-        },
-        backgroundColor: Colors.green,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-          size: 30.0,
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 20.0), // Adjust the margin as needed
+        child: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AddQuestion(); // Use the imported CustomDialog widget
+              },
+            );
+          },
+          backgroundColor: Colors.green,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 30.0,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildQuestionsList(List<Map<String, String>> questions) {
+    List<Map<String, String>> filteredQuestions = [];
+
+    switch (selectedFilter) {
+      case QuestionFilter.All:
+        filteredQuestions = questions;
+        break;
+      case QuestionFilter.Answered:
+        filteredQuestions = questions
+            .where((question) => (question['answer'] ?? '').isNotEmpty)
+            .toList();
+        break;
+      case QuestionFilter.NotAnswered:
+        filteredQuestions = questions
+            .where((question) => (question['answer'] ?? '').isEmpty)
+            .toList();
+        break;
+    }
+
     return ListView.builder(
-      itemCount: questions.length,
+      itemCount: filteredQuestions.length,
       itemBuilder: (context, index) {
-        final question = questions[index];
+        final question = filteredQuestions[index];
         final hasAnswer =
             question['answer'] == null || question['answer']!.isEmpty;
 
@@ -461,16 +488,61 @@ class _QnAState extends State<AnswerPage> {
     );
   }
 
+  // Function to show the filter dialog
   void _showFilterDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        content: filterQnA(),
-      );
-    },
-  );
-}
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('ප්‍රශ්න පෙරහන් කරන්න'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('සියලු ප්‍රශ්න'),
+                leading: Radio(
+                  value: QuestionFilter.All,
+                  groupValue: selectedFilter,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              ListTile(
+                title: const Text('පිළිතුරු දුන් ප්‍රශ්න'),
+                leading: Radio(
+                  value: QuestionFilter.Answered,
+                  groupValue: selectedFilter,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              ListTile(
+                title: const Text('පිළිතුරු නැති ප්‍රශ්න'),
+                leading: Radio(
+                  value: QuestionFilter.NotAnswered,
+                  groupValue: selectedFilter,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
 void main() {

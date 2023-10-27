@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobile/Pages/QnA/farmer_qna.dart';
 
 class AddQuestion extends StatefulWidget {
   @override
@@ -164,7 +165,7 @@ class _AddQuestionState extends State<AddQuestion> {
                               'questionDescription': description,
                               'cropType': _selectedCrop,
                               'author':
-                                  'Your_Author_ID', // Replace with the actual author ID or logic to obtain it
+                                  '11001100', // Replace with the actual author ID or logic to obtain it
                               'answer': "",
                             });
 
@@ -191,6 +192,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                 gravity: ToastGravity.CENTER,
                                 backgroundColor: Colors.green,
                               );
+
+                              // Navigate to the QnAPage after a successful publish
+                              Navigator.of(context).pop();
                             }
                           } catch (error) {
                             // Handle errors and show an error toast message
