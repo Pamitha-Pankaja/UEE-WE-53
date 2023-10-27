@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:mobile/Services/FarmerServices/alert_services.dart';
 
 class BuyerProfile extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -36,6 +37,55 @@ class _BuyerProfileState extends State<BuyerProfile> {
 
   List<File> _profileImages = [];
   int _currentImageIndex = 0;
+
+  Future<void> showCustomAlertDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    required String buttonText,
+    required VoidCallback onButtonPressed,
+    required bool isSuccess,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: title,
+          message: message,
+          buttonText: buttonText,
+          onButtonPressed: onButtonPressed,
+          isSuccess: isSuccess,
+        );
+      },
+    );
+  }
+
+  Future<String> _uploadProfileImage(File image, String userId) async {
+    final Reference storageRef = FirebaseStorage.instance
+        .ref()
+        .child('profile_images/$userId/${DateTime.now()}.jpg');
+
+    final UploadTask uploadTask = storageRef.putFile(image);
+
+    try {
+      await uploadTask;
+      final imageUrl = await storageRef.getDownloadURL();
+      return imageUrl;
+    } catch (e) {
+      print('Error uploading profile image: $e');
+      throw e;
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().getImage(source: source);
+    setState(() {
+      if (pickedFile != null) {
+        _profileImages.add(File(pickedFile.path));
+        _currentImageIndex = _profileImages.length - 1;
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -211,15 +261,16 @@ class _BuyerProfileState extends State<BuyerProfile> {
               children: [
                 const SizedBox(height: 14.0),
                 SizedBox(
-                  width: 150.0,
+                  width: 200.0,
                   height: 50.0,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      updateProfile();
-                    },
-                    backgroundColor: Color.fromARGB(255, 90, 121, 141),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                  child: ElevatedButton(
+                    onPressed: updateProfile,
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xAF018241),
+                      minimumSize: Size(95, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
                     child: const Text(
                       'යාවත්කාලීන කරන්න',
@@ -388,66 +439,89 @@ class _BuyerProfileState extends State<BuyerProfile> {
 
       final updateEmail = emailController.text;
       final updatePassword = passwordController.text;
-      final updatedFarmerName = buyerNameController.text;
+      final updatedBuyerName = buyerNameController.text;
       final updatedContact = contactController.text;
       final updatedAddress = addressController.text;
+// Add validation for empty fields and contact number
+      if (updateEmail.isEmpty ||
+          updatePassword.isEmpty ||
+          updatedBuyerName.isEmpty ||
+          updatedContact.isEmpty ||
+          updatedAddress.isEmpty) {
+        await showCustomAlertDialog(
+          context: context,
+          title: 'අසාර්ථකයි',
+          message: 'සියලුම ක්ෂේත්‍ර පිරවිය යුතුයි.',
+          buttonText: 'අවලංගු කරන්න',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          isSuccess: false,
+        );
+      } else if (updatedContact.length != 10) {
+        await showCustomAlertDialog(
+          context: context,
+          title: 'අසාර්ථකයි',
+          message: 'දුරකථන අංකයේ ඉලක්කම් 10ක් අඩංගු විය යුතුය.',
+          buttonText: 'අවලංගු කරන්න',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          isSuccess: false,
+        );
+      } else {
+        try {
+          final userDocsQuery =
+              firestore.collection('buyers').where('userId', isEqualTo: userId);
 
-      final userDocsQuery =
-          firestore.collection('buyers').where('userId', isEqualTo: userId);
+          final userDocsSnapshot = await userDocsQuery.get();
 
-      final userDocsSnapshot = await userDocsQuery.get();
+          if (userDocsSnapshot.docs.isNotEmpty) {
+            final userDocRef = userDocsSnapshot.docs[0].reference;
 
-      if (userDocsSnapshot.docs.isNotEmpty) {
-        final userDocRef = userDocsSnapshot.docs[0].reference;
+            await userDocRef.update({
+              'email': updateEmail,
+              'password': updatePassword,
+              'buyerName': updatedBuyerName,
+              'contact': updatedContact,
+              'address': updatedAddress,
+            });
 
-        await userDocRef.update({
-          'email': updateEmail,
-          'password': updatePassword,
-          'buyerName': updatedFarmerName,
-          'contact': updatedContact,
-          'address': updatedAddress,
-        });
+            if (_profileImages.isNotEmpty) {
+              final imageUrl = await _uploadProfileImage(
+                _profileImages[_currentImageIndex],
+                userId,
+              );
 
-        if (_profileImages.isNotEmpty) {
-          final imageUrl = await _uploadProfileImage(
-            _profileImages[_currentImageIndex],
-            userId,
+              await userDocRef.update({
+                'profileImageURL': imageUrl,
+              });
+            }
+
+            await showCustomAlertDialog(
+              context: context,
+              title: 'සාර්ථකයි',
+              message: 'ගිණුම සාර්ථකව යාවත්කාලීන කරන ලදී',
+              buttonText: 'හරි',
+              onButtonPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              isSuccess: true,
+            );
+          }
+        } catch (e) {
+          await showCustomAlertDialog(
+            context: context,
+            title: 'අසාර්ථකයි',
+            message: 'ගිණුම යාවත්කාලීන කිරීම අසාර්ථකයි',
+            buttonText: 'අවලංගු කරන්න',
+            onButtonPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            isSuccess: false,
           );
-
-          await userDocRef.update({
-            'profileImageURL': imageUrl,
-          });
         }
       }
     }
   }
-
-  Future<String> _uploadProfileImage(File image, String userId) async {
-    final Reference storageRef = FirebaseStorage.instance
-        .ref()
-        .child('profile_images/$userId/${DateTime.now()}.jpg');
-
-    final UploadTask uploadTask = storageRef.putFile(image);
-
-    try {
-      await uploadTask;
-      final imageUrl = await storageRef.getDownloadURL();
-      return imageUrl;
-    } catch (e) {
-      print('Error uploading profile image: $e');
-      throw e;
-    }
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().getImage(source: source);
-    setState(() {
-      if (pickedFile != null) {
-        _profileImages.add(File(pickedFile.path));
-        _currentImageIndex = _profileImages.length - 1;
-      }
-    });
-  }
 }
-
-
