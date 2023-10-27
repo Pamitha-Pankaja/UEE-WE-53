@@ -196,7 +196,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       });
       // Print a success message or handle the update completion as needed.
       print('Document updated successfully');
-      DataInsertSuccessfullyDialogpop();
+      // DataInsertSuccessfullyDialogpop();
     } catch (e) {
       // Handle any errors that occur during the update.
       print("Error updating data in Firestore: $e");
@@ -258,6 +258,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                     );
                   } else {
                     updateFirestoreDocument();
+                    DataInsertSuccessfullyDialogpop();
                   }
                 },
                 style: ButtonStyle(
