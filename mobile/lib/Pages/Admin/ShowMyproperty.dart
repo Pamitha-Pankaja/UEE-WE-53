@@ -332,7 +332,7 @@ class PropertyContainer extends StatelessWidget {
                     SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: onDelete,
-                      child: Text('Delete'),
+                      child: Text('මකන්න'),
                       style: ElevatedButton.styleFrom(
                         primary: Color(0xfffb758d),
                         shape: RoundedRectangleBorder(
