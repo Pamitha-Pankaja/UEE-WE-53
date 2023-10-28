@@ -169,7 +169,7 @@ class _BuyerHomeState extends State<BuyerHome> {
                 padding: EdgeInsets.only(
                     top: 0.0, bottom: 0.0, left: 20.0, right: 0.0),
                 child: Text(
-                  'ආසන්නතම යෝජනා',
+                  'අස්වනු යෝජනා',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
